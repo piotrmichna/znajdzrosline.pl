@@ -25,7 +25,9 @@ SECRET_KEY = '*m77@t*2(=0(0$m@1#l=biv&71@ob#kzo-9s^n46qd2vz)sgjz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost','www.znajdzrosline.pl', 'znajdzrosline.pl',
+                'www.znajdzrosline.com.pl', 'znajdzrosline.com.pl',
+                '127.0.0.1']
 
 
 # Application definition
