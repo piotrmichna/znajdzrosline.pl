@@ -1,0 +1,17 @@
+{% extends "botanical_base.html" %}
+{% block page_title %}<h1 class="display-5">Systematyka</h1>{%  endblock %}
+{% block page_description %}
+          <p>Wybierz nazwę rodzaju w poniższym formularzu. Jeśli nie znalazłeś nazwy możesz ją dodać tutaj</p>
+          <p><a class="btn btn-primary btn-lg" href="#" role="button">Dodaj nazwę &raquo;</a></p>
+{%  endblock %}
+{% block page_content %}
+        <div class="row">
+          <div class="col-mgit d-4">
+            <h2>Rodzaj</h2>
+            <form class="form-inline my-2 my-lg-0">
+              <input class="form-control mr-sm-2" type="text" name="genus_name" placeholder="Rodzaj" aria-label="Rodzaj">
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Wybierz</button>
+            </form>
+          </div>
+        </div>
+{%  endblock %}
