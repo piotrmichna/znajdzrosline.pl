@@ -15,3 +15,8 @@ class BotSystSpecies(models.Model):
     lac_name = models.CharField(max_length=32, null=False, verbose_name='Nazwa łacińska')
     pl_name = models.CharField(max_length=32, null=False, verbose_name='Nazwa polska')
     hybrid = models.BooleanField(null=True, verbose_name='Mieszaniec')
+
+
+class BotSystCultivar(models.Model):
+    species = models.ForeignKey(BotSystSpecies, on_delete=models.CASCADE)
+    cultivar = models.CharField(max_length=32, null=False, verbose_name='Odmiana')
