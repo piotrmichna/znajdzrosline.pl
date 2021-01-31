@@ -2,11 +2,15 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
-from botanical.models import BotSystGenus, BotSystSpecies
+from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar
 
 
 class BotanicalView(View):
     def get(self, request):
+        if request.session.get('genus_name'):
+            del request.session['genus_name']
+        if request.session.get('species_name'):
+            del request.session['species_name']
         return render(request, 'botanical_base.html')
 
 
