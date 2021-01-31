@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
-from botanical.models import BotSystGenus
+from botanical.models import BotSystGenus, BotSystSpecies
 
 
 class BotanicalView(View):
@@ -12,10 +12,30 @@ class BotanicalView(View):
 
 class BotanicalAddView(View):
     def get(self, request):
-        if not request.session.get('genus_name'):
-            genus = BotSystGenus.objects.all()
-            return render(request, 'botanical_sel_genus.html', {'genus': genus,
-                                                                'step': 'genus'})
+        genus_name = request.session.get('genus_name')
+        species_name = request.session.get('species_name')
+
+        if genus_name:
+            try:
+                gen = BotSystGenus.objects.get(lac_name=genus_name)
+            except BotSystGenus.DoesNotExist:
+                del request.session['genus_name']
+                del request.session['species_name']
+                species_name = None
+
+        if species_name:
+            try:
+                spec = BotSystSpecies.objects.get(genus=gen, lac_name=species_name)
+            except BotSystSpecies.DoesNotExist:
+                del request.session['species_name']
+                species = BotSystSpecies.obiecjs.filter(genus=gen)
+                return render(request, 'botanical_sel_species.html', {'genus': gen,
+                                                                      'species': species})
+            # return render(request, 'botanical_sel_cultivar.html', {'genus': gen,
+            #                                                        'spec': spec})
+
+        genus = BotSystGenus.objects.all()
+        return render(request, 'botanical_sel_genus.html', {'genus': genus, })
 
     def post(self, request):
         error = []
