@@ -117,7 +117,8 @@ class BotanicalAddGenusView(View):
                 else:
                     error.append('W katalogu już istniej Rodzaj o takich nazwach.')
         else:
-            error.append('Obie nazwy są wymagane, jeśli polska nazwa nie istnieje to wpisz łacińską z małej litery.')
+            error.append(
+                'Obie nazwy są wymagane, jeśli polska nazwa nie istnieje to wpisz łacińską z małej litery.')
 
         return render(request, 'botanical_add_genus.html', {'error': error,
                                                             'genus_lac': genus_lac,
