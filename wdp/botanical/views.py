@@ -25,14 +25,22 @@ class BotanicalAddView(View):
             except BotSystGenus.DoesNotExist:
                 del request.session['genus_name']
                 del request.session['species_name']
-                species_name = None
+                genus = BotSystGenus.objects.all()
+                return render(request, 'botanical_sel_genus.html', {'genus': genus})
 
-        if species_name:
-            try:
-                spec = BotSystSpecies.objects.get(genus=gen, lac_name=species_name)
-            except BotSystSpecies.DoesNotExist:
-                del request.session['species_name']
-                species = BotSystSpecies.obiecjs.filter(genus=gen)
+            if species_name:
+                try:
+                    species = BotSystSpecies.objects.get(genus=gen, lac_name=species_name)
+                except BotSystSpecies.DoesNotExist:
+                    del request.session['species_name']
+                    species = BotSystSpecies.objects.filter(genus=gen)
+                    return render(request, 'botanical_sel_species.html', {'genus': gen,
+                                                                          'species': species})
+
+                return render(request, 'botanical_sel_cultivar.html', {'genus': gen,
+                                                                       'spec': species})
+            else:
+                species = BotSystSpecies.objects.filter(genus=gen)
                 return render(request, 'botanical_sel_species.html', {'genus': gen,
                                                                       'species': species})
             # return render(request, 'botanical_sel_cultivar.html', {'genus': gen,
