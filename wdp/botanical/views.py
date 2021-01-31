@@ -169,3 +169,36 @@ class BotanicalAddGenusView(View):
         return render(request, 'botanical_add_genus.html', {'error': error,
                                                             'genus_lac': genus_lac,
                                                             'genus_pl': genus_pl})
+
+
+class BotanicalAddSpeciesView(View):
+    def get(self, request):
+        genus_name = request.session.get('genus_name')
+
+        if genus_name:
+            return render(request, 'botanical_add_species.html', {'genus_name': genus_name})
+        else:
+            return redirect('/botanical/add/')
+
+    def post(self, request):
+        error = []
+        try:
+            genus = BotSystGenus.objects.get(lac_name=request.session.get('genus_name'))
+        except BotSystGenus.DoesNotExist:
+            return redirect('/botanical/add/')
+        species_lac = request.POST.get('species_lac')
+        species_pl = request.POST.get('species_pl')
+
+        if not species_lac or not species_pl:
+            error.append('Obnie nazwy są wymagane.')
+        else:
+            if BotSystSpecies.objects.filter(genus=genus, lac_name=species_lac, pl_name=species_pl).count():
+                error.append('Gatunek o takich nazwach już istnieje!')
+            else:
+                BotSystSpecies.objects.create(genus=genus, lac_name=species_lac, pl_name=species_pl)
+                return redirect('/botanical/add/')
+
+        return render(request, 'botanical_add_species.html', {'genus_name': request.session.get('genus_name'),
+                                                              'species_lac': species_lac,
+                                                              'species_pl': species_pl,
+                                                              'error': error})
