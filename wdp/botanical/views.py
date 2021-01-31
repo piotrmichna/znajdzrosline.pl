@@ -39,18 +39,55 @@ class BotanicalAddView(View):
 
     def post(self, request):
         error = []
+
         if not request.session.get('genus_name'):
             genus_name = request.POST.get('genus_name')
             if genus_name and genus_name != 'Wybierz':
+                try:
+                    genus = BotSystGenus.objects.get(lac_name=genus_name)
+                except BotSystGenus.DoesNotExist:
+                    error.append("Nie istnieje rodzaj z taką nazwą łacińską.")
+                    genus = BotSystGenus.objects.all()
+                    return render(request, 'botanical_sel_genus.html', {'genus': genus,
+                                                                        'genus_name': genus_name,
+                                                                        'error': error})
                 request.session['genus_name'] = genus_name
+                species = BotSystSpecies.obiecjs.filter(genus=genus)
+                return render(request, 'botanical_sel_species.html', {'genus': genus,
+                                                                      'species': species})
             else:
                 error.append('Nie wybrano nazwy Rodzaju')
                 genus = BotSystGenus.objects.all()
                 return render(request, 'botanical_sel_genus.html', {'genus': genus,
-                                                                    'step': 'genus',
                                                                     'error': error})
+        elif not request.session.get('species_name'):
 
-
+            genus_name = request.session.get('genus_name')
+            try:
+                genus = BotSystGenus.objects.get(lac_name=genus_name)
+            except BotSystGenus.DoesNotExist:
+                error.append("Nie istnieje rodzaj z taką nazwą łacińską.")
+                del request.session['genus_name']
+                genus = BotSystGenus.objects.all()
+                return render(request, 'botanical_sel_genus.html', {'genus': genus,
+                                                                    'error': error})
+            species_name = request.POST.get('species_name')
+            if species_name and species_name != 'Wybierz':
+                try:
+                    species = BotSystSpecies.objects.get(genus=genus, lac_name=species_name)
+                except BotSystSpecies.DoesNotExist:
+                    error.append(f"Nie istnieje gatunek z taką nazwą łacińską dla rodzaju: {genus.lac_name}.")
+                    species = BotSystSpecies.objects.filter(genus=genus).all()
+                    return render(request, 'botanical_sel_species.html', {'genus': genus,
+                                                                          'species': species,
+                                                                          'error': error})
+                request.session['species_name'] = species_name
+                return render(request, 'botanical_sel_species.html', {'genus': genus,
+                                                                      'species': species})
+            else:
+                species = BotSystSpecies.objects.filter(genus=genus).all()
+                return render(request, 'botanical_sel_species.html', {'genus': genus,
+                                                                      'species': species})
 
 
 class BotanicalAddGenusView(View):
