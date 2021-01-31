@@ -1,0 +1,57 @@
+{% extends "botanical_base.html" %}
+{% block page_title %}<h1 class="display-5">Systematyka - Rodzaj</h1>{%  endblock %}
+{% block page_description %}
+<p>Wybierz nazwę rodzaju w poniższym formularzu. Jeśli nie znalazłeś nazwy możesz ją dodać tutaj</p>
+<p><a class="btn btn-primary btn-lg" href="/botanical/add/genus/" role="button">Dodaj nazwę &raquo;</a></p>
+{%  endblock %}
+{% block page_content %}
+<div class="row">
+    <div class="col-mgit d-4">
+        <h2>Rodzaj</h2>
+        <form class="form-inline my-2 my-lg-0" method="POST">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Nazwa łacińska</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01" name="genus_name">
+                    {% for gen in genus %}
+                    {% if forloop.first %}
+                        {% if genus_name %}
+                         <option>Wybierz</option>
+                        {% endif %}
+                    {% endif %}
+                    {% if gen.lac_name == genus_name %}
+                    {% if gen.hybrid %}
+                    <option value="{{gen.lac_name}}" selected>x {{gen.lac_name}}</option>
+                    {% else %}
+                    <option value="{{gen.lac_name}}" selected>{{gen.lac_name}}</option>
+                    {% endif %}
+                    {% else %}
+                    {% if gen.hybrid %}
+                    <option value="{{gen.lac_name}}">x {{gen.lac_name}}</option>
+                    {% else %}
+                    <option value="{{gen.lac_name}}">{{gen.lac_name}}</option>
+                    {% endif %}
+                    {% endif %}
+                    {% empty %}
+                    <option selected>Brak nazw...</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Wybierz</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% if error %}
+<div class="row">
+    <div class="col-mgit d-4">
+        <h5 style="margin-top: 10px; color: #772222;">Błąd</h5>
+        {% for er in error %}
+        <p style="color: #772222;">{{ er }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{%  endblock %}
