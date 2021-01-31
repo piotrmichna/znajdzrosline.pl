@@ -43,14 +43,32 @@ class BotanicalAddView(View):
                 species = BotSystSpecies.objects.filter(genus=gen)
                 return render(request, 'botanical_sel_species.html', {'genus': gen,
                                                                       'species': species})
-            # return render(request, 'botanical_sel_cultivar.html', {'genus': gen,
-            #                                                        'spec': spec})
 
         genus = BotSystGenus.objects.all()
         return render(request, 'botanical_sel_genus.html', {'genus': genus, })
 
     def post(self, request):
         error = []
+        plant_name = request.POST.get('plant_name')
+        if plant_name:
+            genus = BotSystGenus.objects.get(lac_name=request.session.get('genus_name'))
+            species = BotSystSpecies.objects.get(genus=genus, lac_name=request.session.get('species_name'))
+            cultivar = request.session.get('cultivar_name')
+            if genus:
+                if species:
+                    if cultivar:
+                        cultivar = BotSystCultivar.objects.create(species=species, cultivar=cultivar)
+                        del request.session['cultivar_name']
+                        del request.session['genus_name']
+                        del request.session['species_name']
+                        return HttpResponse(f"Utworzono roślinę: {genus.lac_name} {species.lac_name} {cultivar.cultivar}")
+                    else:
+                        del request.session['genus_name']
+                        del request.session['species_name']
+                        return HttpResponse(f"Utworzono roślinę: {genus.lac_name} {species.lac_name}")
+                else:
+                    del request.session['genus_name']
+                    return HttpResponse(f"Utworzono roślinę: {genus.lac_name}")
 
         if not request.session.get('genus_name'):
             genus_name = request.POST.get('genus_name')
@@ -64,7 +82,7 @@ class BotanicalAddView(View):
                                                                         'genus_name': genus_name,
                                                                         'error': error})
                 request.session['genus_name'] = genus_name
-                species = BotSystSpecies.obiecjs.filter(genus=genus)
+                species = BotSystSpecies.objects.filter(genus=genus)
                 return render(request, 'botanical_sel_species.html', {'genus': genus,
                                                                       'species': species})
             else:
@@ -94,12 +112,28 @@ class BotanicalAddView(View):
                                                                           'species': species,
                                                                           'error': error})
                 request.session['species_name'] = species_name
-                return render(request, 'botanical_sel_species.html', {'genus': genus,
-                                                                      'species': species})
+                cultivar = BotSystCultivar.objects.filter(species=species)
+                return render(request, 'botanical_sel_cultivar.html', {'genus': genus,
+                                                                       'species': species,
+                                                                       'cultivar': cultivar})
             else:
                 species = BotSystSpecies.objects.filter(genus=genus).all()
                 return render(request, 'botanical_sel_species.html', {'genus': genus,
                                                                       'species': species})
+        else:
+            genus = BotSystGenus.objects.get(lac_name=request.session.get('genus_name'))
+            species = BotSystSpecies.objects.get(genus=genus, lac_name=request.session.get('species_name'))
+            cultivar_name = request.POST.get('cultivar_name')
+            if cultivar_name:
+                if not BotSystCultivar.objects.filter(species=species, cultivar=cultivar_name).count():
+                    request.session['cultivar_name'] = cultivar_name
+                else:
+                    error.append('Roślina o tej odmianie już istnieje!')
+            cultivar = BotSystCultivar.objects.filter(species=species)
+            return render(request, 'botanical_sel_cultivar.html', {'genus': genus,
+                                                                   'species': species,
+                                                                   'cultivar': cultivar_name,
+                                                                   'error':error})
 
 
 class BotanicalAddGenusView(View):
