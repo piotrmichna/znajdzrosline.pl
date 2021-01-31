@@ -1,0 +1,55 @@
+{% extends "botanical_base.html" %}
+{% block page_title %}<h1 class="display-5">Systematyka - Odmiana</h1>{%  endblock %}
+{% block page_description %}
+<p>Wpisz nazwę Odmiany w poniższym formularzu. Jeśli nie znalazłeś nazwy możesz ją dodać tutaj</p>
+<!--<p><a class="btn btn-primary btn-lg" href="/botanical/add//" role="button">Dodaj nazwę &raquo;</a></p>-->
+{%  endblock %}
+{% block page_content %}
+<div class="row">
+    <div class="col-mgit d-4">
+        <h2>Odmiana</h2>
+        <form class="form-inline my-2 my-lg-0" method="POST">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">Nazwa odmiany</label>
+                </div>
+                <input class="custom-select" id="inputGroupSelect01" name="cultivar_name" value="{{cultivar_name}}">
+
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Wybierz</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% if error %}
+<div class="row">
+    <div class="col-mgit d-4">
+        <h5 style="margin-top: 10px; color: #772222;">Błąd</h5>
+        {% for er in error %}
+        <p style="color: #772222;">{{ er }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+<div class="row">
+    <div class="col-mgit d-4">
+        <h2>Nazwa rośliny</h2>
+        <form class="form-inline my-2 my-lg-0" method="POST">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect02">Nazwa łacińska</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect02" name="plant_name">
+                    <option value="{{genus.lac_name}}" selected>{{request.session.genus_name}}
+                        {{request.session.species_name}} {{request.session.cultivar_name}}
+                    </option>
+                </select>
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Zapisz Roślinę</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+{%  endblock %}

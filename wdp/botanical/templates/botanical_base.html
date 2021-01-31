@@ -57,7 +57,7 @@
       <!-- Main jumbotron for a primary marketing message or call to action -->
       <div class="jumbotron">
         <div class="container">
-          <h1 class="display-4">{% block page_title %}Katalog roślin{%  endblock %}</h1>
+          {% block page_title %}<h1 class="display-4">Katalog roślin</h1>{%  endblock %}
           {% block page_description %}
           <p>Przeglądaj rośliny w naszym katalogu aby dodać je do projektu lub posadzić w swoim własnym ogrodzie. Jeśli jesteś szkółkarzem możesz dołączyć swoją ofertę do roślin, które produkujesz.</p>
           <p><a class="btn btn-primary btn-lg" href="#" role="button">Zobacz więcej &raquo;</a></p>
@@ -69,7 +69,7 @@
         <!-- Example row of columns -->
         {% block page_content %}
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-mgit d-4">
             <h2>Klient</h2>
             <p>W naszym katalogu znajduje się wiele roślin, które możesz śmiało wykorzystać w swoim ogrodzi. Większość roślin ma wpisanych producentów, może i z twojej Miejscowości. Znajdziesz tu także projektantów. </p>
             <p><a class="btn btn-secondary" href="#" role="button">Zobacz więcej &raquo;</a></p>

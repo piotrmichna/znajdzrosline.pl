@@ -1,0 +1,33 @@
+{% extends "botanical_base.html" %}
+{% block page_title %}<h1 class="display-5">Systematyka - Gatunek</h1>{%  endblock %}
+{% block page_description %}
+
+        <h5>Ddodanie gatunku la rodzaju: {{request.session.genus_name}}</h5>
+          <ul>
+            <li>Nazwy gatunku piszemy małymi literami.</li>
+            <li>Jeśli rodzaj jest mieszańcem poprzedź obie nazwy małą literą x.</li>
+          </ul>
+{%  endblock %}
+{% block page_content %}
+        <div class="row">
+          <div class="col-mgit d-4">
+            <h2>Gatunek</h2>
+            <form class="form-inline my-2 my-lg-0" method="POST">
+              {% csrf_token %}
+              <input class="form-control mr-sm-2" type="text" name="species_lac" value="{{ species_lac }}" placeholder="Nazwa łacińska" aria-label="Nazwa łacińska">
+              <input class="form-control mr-sm-2" type="text" name="species_pl" value="{{ species_pl }}" placeholder="Nazwa polska" aria-label="Nazwa polska">
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Zapisz</button>
+            </form>
+          </div>
+        </div>
+        {% if error %}
+        <div class="row">
+          <div class="col-mgit d-4">
+            <h5 style="margin-top: 10px; color: #772222;">Błąd</h5>
+            {% for er in error %}
+            <p style="color: #772222;">{{ er }}</p>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+{%  endblock %}
