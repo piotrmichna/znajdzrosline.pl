@@ -1,7 +1,8 @@
 {% extends "botanical_base.html" %}
 {% block page_title %}<h1 class="display-5">Systematyka - Gatunek</h1>{%  endblock %}
 {% block page_description %}
-        <h5>Ddodanie gatunku la rodzaju: {{genus_name}}</h5>
+
+        <h5>Ddodanie gatunku la rodzaju: {{request.session.genus_name}}</h5>
           <ul>
             <li>Nazwy gatunku piszemy małymi literami.</li>
             <li>Jeśli rodzaj jest mieszańcem poprzedź obie nazwy małą literą x.</li>

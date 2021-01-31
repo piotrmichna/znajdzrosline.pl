@@ -14,24 +14,24 @@
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="inputGroupSelect01">Nazwa łacińska</label>
                 </div>
-                <select class="custom-select" id="inputGroupSelect01" name="genus_name">
-                    {% for gen in species %}
+                <select class="custom-select" id="inputGroupSelect01" name="species_name">
+                    {% for spec in species %}
                     {% if forloop.first %}
                     {% if species_name %}
                     <option>Wybierz</option>
                     {% endif %}
                     {% endif %}
-                    {% if gen.lac_name == genus_name %}
-                    {% if gen.hybrid %}
-                    <option value="{{gen.lac_name}}" selected>x {{gen.lac_name}}</option>
+                    {% if spec.lac_name == species_name %}
+                    {% if spec.hybrid %}
+                    <option value="{{spec.lac_name}}" selected>x {{spec.lac_name}}</option>
                     {% else %}
-                    <option value="{{gen.lac_name}}" selected>{{gen.lac_name}}</option>
+                    <option value="{{spec.lac_name}}" selected>{{spec.lac_name}}</option>
                     {% endif %}
                     {% else %}
-                    {% if gen.hybrid %}
-                    <option value="{{gen.lac_name}}">x {{gen.lac_name}}</option>
+                    {% if spec.hybrid %}
+                    <option value="{{spec.lac_name}}">x {{spec.lac_name}}</option>
                     {% else %}
-                    <option value="{{gen.lac_name}}">{{gen.lac_name}}</option>
+                    <option value="{{spec.lac_name}}">{{spec.lac_name}}</option>
                     {% endif %}
                     {% endif %}
                     {% empty %}
