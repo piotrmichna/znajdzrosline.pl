@@ -12,7 +12,25 @@ class BotanicalView(View):
 
 class BotanicalAddView(View):
     def get(self, request):
-        return render(request, 'botanical_add.html')
+        if not request.session.get('genus_name'):
+            genus = BotSystGenus.objects.all()
+            return render(request, 'botanical_sel_genus.html', {'genus': genus,
+                                                                'step': 'genus'})
+
+    def post(self, request):
+        error = []
+        if not request.session.get('genus_name'):
+            genus_name = request.POST.get('genus_name')
+            if genus_name and genus_name != 'Wybierz':
+                request.session['genus_name'] = genus_name
+            else:
+                error.append('Nie wybrano nazwy Rodzaju')
+                genus = BotSystGenus.objects.all()
+                return render(request, 'botanical_sel_genus.html', {'genus': genus,
+                                                                    'step': 'genus',
+                                                                    'error': error})
+
+
 
 
 class BotanicalAddGenusView(View):
