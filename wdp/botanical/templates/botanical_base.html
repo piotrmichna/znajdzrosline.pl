@@ -1,108 +1,113 @@
 <!doctype html>
 <html lang="pl">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-<!--     <link rel="icon" href="../../../../favicon.ico"> -->
+    <!--     <link rel="icon" href="../../../../favicon.ico"> -->
 
-    <title>{% block title %}Katalog roślin{%  endblock %}</title>
+    <title>{% block title %}Katalog roślin{% endblock %}</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="/static/css/jumbotron.css" rel="stylesheet">
-  </head>
+</head>
 
-  <body>
+<body>
 
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="https://znajdzrosline.pl/botanical">ZnajdzRosline.pl</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <a class="navbar-brand" href="https://znajdzrosline.pl/">ZnajdzRosline.pl</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+            aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
+    </button>
 
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Rośliny <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Szkułki</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Projektanci</a>
-<!--        <a class="nav-link disabled" href="#">Projektanci</a>-->
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Użytkownik</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="#">Moje konto</a>
-              <a class="dropdown-item" href="#">Ustawienia</a>
-              <a class="dropdown-item" href="#">Wyloguj</a>
-            </div>
-          </li>
+            {% if request.user.is_authenticated %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="" id="dropdown01" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false"> Rośliny <span class="sr-only">(current)</span></a>
+
+                <div class="dropdown-menu" aria-labelledby="dropdown01">
+                    {% if request.session.genus_name %}
+                    <a class="dropdown-item" href="{% url 'botanical-add-clear' %}">Wyczyść dodawanie</a>
+                    {% endif %}
+                    <a class="dropdown-item" href="{% url 'botanical-add' %}">Dodaj roślinę</a>
+<!--                    <a class="dropdown-item" href="#">Edytuj roślinę</a>-->
+<!--                    <a class="dropdown-item" href="#">Szukaj</a>-->
+                </div>
+            </li>
+            {% else %}
+            <li class="nav-item active">
+                <a class="nav-link" href="/botanical/"> Rośliny <span class="sr-only">(current)</span></a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link" href="#">Szkułki</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">Projektanci</a>
+                <!--        <a class="nav-link disabled" href="#">Projektanci</a>-->
+            </li>
+
+            {% if request.user.is_authenticated %}
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown02" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false"> {{ request.user.username }} </a>
+
+                <div class="dropdown-menu" aria-labelledby="dropdown02">
+<!--                    <a class="dropdown-item" href="#">Moje konto</a>-->
+<!--                    <a class="dropdown-item" href="#">Ustawienia</a>-->
+                    <a class="dropdown-item" href="{% url 'logout' %}">Wyloguj</a>
+                </div>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}"> Zaloguj </a>
+                <!--        <a class="nav-link disabled" href="#">Projektanci</a>-->
+            </li>
+            {% endif %}
+
         </ul>
-<!--        <form class="form-inline my-2 my-lg-0">-->
-<!--          <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">-->
-<!--          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
-<!--        </form>-->
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <main role="main">
+<main role="main">
 
-      <!-- Main jumbotron for a primary marketing message or call to action -->
-      <div class="jumbotron">
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
         <div class="container">
-          {% block page_title %}<h1 class="display-4">Katalog roślin</h1>{%  endblock %}
-          {% block page_description %}
-          <p>Przeglądaj rośliny w naszym katalogu aby dodać je do projektu lub posadzić w swoim własnym ogrodzie. Jeśli jesteś szkółkarzem możesz dołączyć swoją ofertę do roślin, które produkujesz.</p>
-          <p><a class="btn btn-primary btn-lg" href="#" role="button">Zobacz więcej &raquo;</a></p>
-          {%  endblock %}
+            {% block page_title %}
+            {% endblock %}
+            {% block page_description %}
+            {% endblock %}
         </div>
-      </div>
+    </div>
 
-      <div class="container">
+    <div class="container">
         <!-- Example row of columns -->
         {% block page_content %}
-        <div class="row">
-          <div class="col-mgit d-4">
-            <h2>Klient</h2>
-            <p>W naszym katalogu znajduje się wiele roślin, które możesz śmiało wykorzystać w swoim ogrodzi. Większość roślin ma wpisanych producentów, może i z twojej Miejscowości. Znajdziesz tu także projektantów. </p>
-            <p><a class="btn btn-secondary" href="#" role="button">Zobacz więcej &raquo;</a></p>
-          </div>
-          <div class="col-md-4">
-            <h2>Szkółkarz</h2>
-            <p>Możesz dodać własne ceny z uwzględnieniem wieku/rozmiaru rośliny w naszym katalogu. Jeśli rośliny nie znajdziesz, możesz ją sam zdefiniować w katalogu. Posiadając zarejestrowane konto w naszym serwisie możesz eksportować swój własny katalog w formie PDF </p>
-            <p><a class="btn btn-secondary" href="#" role="button">Zobacz więcej &raquo;</a></p>
-          </div>
-          <div class="col-md-4">
-            <h2>Projektant</h2>
-            <p>Nasz serwis umożliwia tworzenie projektów oraz dodawanie do nich roślin. Można generować pełną specyfikację materiału roślinnego opisowej części projektu.</p>
-            <p><a class="btn btn-secondary" href="#" role="button">Zobacz więcej &raquo;</a></p>
-          </div>
-        </div>
-        {%  endblock %}
-
+        {% endblock %}
         <hr>
+    </div> <!-- /container -->
+</main>
 
-      </div> <!-- /container -->
+<footer class="container">
+    <p>&copy; <a href="https://znajdzrosline.pl/">Znajdzrosline.pl</a> Piotr Michna | 2015-2021</p>
+</footer>
 
-    </main>
-
-    <footer class="container">
-      <p>&copy; <a href="https://znajdzrosline.pl/">Znajdzrosline.pl</a> Piotr Michna | 2015-2021</p>
-    </footer>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="/static/js/jquery-slim.min.js"><\/script>')</script>
-    <script src="/static/js/popper.min.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-  </body>
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script>window.jQuery || document.write('<script src="/static/js/jquery-slim.min.js"><\/script>')</script>
+<script src="/static/js/popper.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+</body>
 </html>

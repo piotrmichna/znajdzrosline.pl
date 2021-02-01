@@ -1,8 +1,15 @@
 {% extends "botanical_base.html" %}
 {% block page_title %}<h1 class="display-5">Systematyka - Rodzaj</h1>{%  endblock %}
 {% block page_description %}
-<p>Wybierz nazwę rodzaju w poniższym formularzu. Jeśli nie znalazłeś nazwy możesz ją dodać tutaj</p>
-<p><a class="btn btn-primary btn-lg" href="/botanical/add/genus/" role="button">Dodaj nazwę &raquo;</a></p>
+<ul>
+    <li>Wybierz nazwę rodzaju w poniższym formularzu.</li>
+    <li>Jeśli nie znalazłeś nazwy możesz ją dodać tutaj.</li>
+    <li style="list-style-type: none;">
+        <a class="btn btn-success btn-sm" style="margin-top: 7px;" href="{% url 'botanical-add-genus' %}" role="button">Dodaj nazwę &raquo;</a>
+    </li>
+</ul>
+
+
 {%  endblock %}
 {% block page_content %}
 <div class="row">

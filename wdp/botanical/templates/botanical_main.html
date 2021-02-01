@@ -1,0 +1,35 @@
+{% extends "botanical_base.html" %}
+{% block title %}Katalog roślin{% endblock %}
+{% block page_title %}<h1 class="display-4">Katalog roślin</h1>{% endblock %}
+
+{% block page_description %}
+<p>Przeglądaj rośliny w naszym katalogu aby dodać je do projektu lub posadzić w swoim własnym ogrodzie.
+    Jeśli jesteś szkółkarzem możesz dołączyć swoją ofertę do roślin, które produkujesz.</p>
+<p><a class="btn btn-secondary btn-sm" href="#" role="button">Zobacz więcej &raquo;</a>
+
+    {% endblock %}
+
+    {% block page_content %}
+<div class="row">
+    <div class="col-md-4">
+        <h2>Klient</h2>
+        <p>W naszym katalogu znajduje się wiele roślin, które możesz śmiało wykorzystać w swoim ogrodzi.
+            Większość roślin ma wpisanych producentów, może i z twojej Miejscowości. Znajdziesz tu także
+            projektantów. </p>
+        <p><a class="btn btn-secondary" href="#" role="button">Zobacz więcej &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Szkółkarz</h2>
+        <p>Możesz dodać własne ceny z uwzględnieniem wieku/rozmiaru rośliny w naszym katalogu. Jeśli rośliny nie
+            znajdziesz, możesz ją sam zdefiniować w katalogu. Posiadając zarejestrowane konto w naszym serwisie
+            możesz eksportować swój własny katalog w formie PDF </p>
+        <p><a class="btn btn-secondary" href="#" role="button">Zobacz więcej &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Projektant</h2>
+        <p>Nasz serwis umożliwia tworzenie projektów oraz dodawanie do nich roślin. Można generować pełną
+            specyfikację materiału roślinnego opisowej części projektu.</p>
+        <p><a class="btn btn-secondary" href="#" role="button">Zobacz więcej &raquo;</a></p>
+    </div>
+</div>
+{% endblock %}

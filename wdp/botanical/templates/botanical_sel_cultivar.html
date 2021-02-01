@@ -1,8 +1,12 @@
 {% extends "botanical_base.html" %}
 {% block page_title %}<h1 class="display-5">Systematyka - Odmiana</h1>{%  endblock %}
 {% block page_description %}
-<p>Wpisz nazwę Odmiany w poniższym formularzu. Jeśli nie znalazłeś nazwy możesz ją dodać tutaj</p>
-<!--<p><a class="btn btn-primary btn-lg" href="/botanical/add//" role="button">Dodaj nazwę &raquo;</a></p>-->
+<ul>
+    <li>Dodanie odmiany dla gatunku: <strong>{{request.session.species_name}}</strong></li>
+    <li>Nazwy odmiany zaczynamy z dużej litery.</li>
+    <li>Jeśli chcesz zdefiniować opis Gatunkowy: pozostaw nazwę odmiany pustą.</li>
+</ul>
+
 {%  endblock %}
 {% block page_content %}
 <div class="row">
