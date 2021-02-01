@@ -7,11 +7,18 @@ from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar
 
 class BotanicalView(View):
     def get(self, request):
+        return render(request, 'botanical_main.html')
+
+
+class BotanicalAddClear(View):
+    def get(self, request):
         if request.session.get('genus_name'):
             del request.session['genus_name']
         if request.session.get('species_name'):
             del request.session['species_name']
-        return render(request, 'botanical_main.html')
+        if request.session.get('cultivar_name'):
+            del request.session['cultivar_name']
+        return redirect('botanical')
 
 
 class BotanicalAddView(View):

@@ -33,6 +33,9 @@
                    aria-haspopup="true" aria-expanded="false"> Rośliny <span class="sr-only">(current)</span></a>
 
                 <div class="dropdown-menu" aria-labelledby="dropdown01">
+                    {% if request.session.genus_name %}
+                    <a class="dropdown-item" href="{% url 'botanical-add-clear' %}">Wyczyść dodawanie</a>
+                    {% endif %}
                     <a class="dropdown-item" href="{% url 'botanical-add' %}">Dodaj roślinę</a>
 <!--                    <a class="dropdown-item" href="#">Edytuj roślinę</a>-->
 <!--                    <a class="dropdown-item" href="#">Szukaj</a>-->
