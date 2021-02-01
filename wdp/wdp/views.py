@@ -11,3 +11,8 @@ class Main(View):
 class Przeznaczenia(View):
     def get(self, request):
         return render(request, 'main_przeznaczenia.html')
+
+
+class Kontakt(View):
+    def get(self, request):
+        return render(request, 'main_kontakt.html')
