@@ -68,7 +68,8 @@ class BotanicalAddView(View):
                         del request.session['cultivar_name']
                         del request.session['genus_name']
                         del request.session['species_name']
-                        return HttpResponse(f"Utworzono roślinę: {genus.lac_name} {species.lac_name} {cultivar.cultivar}")
+                        return HttpResponse(
+                            f"Utworzono roślinę: {genus.lac_name} {species.lac_name} {cultivar.cultivar}")
                     else:
                         del request.session['genus_name']
                         del request.session['species_name']
@@ -140,7 +141,7 @@ class BotanicalAddView(View):
             return render(request, 'botanical_sel_cultivar.html', {'genus': genus,
                                                                    'species': species,
                                                                    'cultivar': cultivar_name,
-                                                                   'error':error})
+                                                                   'error': error})
 
 
 class BotanicalAddGenusView(View):
