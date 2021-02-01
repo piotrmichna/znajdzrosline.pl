@@ -11,7 +11,7 @@ class BotanicalView(View):
             del request.session['genus_name']
         if request.session.get('species_name'):
             del request.session['species_name']
-        return render(request, 'botanical_base.html')
+        return render(request, 'botanical_main.html')
 
 
 class BotanicalAddView(View):
