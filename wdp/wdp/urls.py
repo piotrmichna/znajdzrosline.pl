@@ -20,6 +20,8 @@ from wdp.views import Main, Przeznaczenia, Kontakt
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
     path('', Main.as_view(), name='main'),
     path('przeznaczenia/', Przeznaczenia.as_view(), name='przeznaczenia'),
     path('kontakt/', Kontakt.as_view(), name='kontakt'),

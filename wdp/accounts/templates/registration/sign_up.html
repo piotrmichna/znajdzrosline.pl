@@ -1,0 +1,50 @@
+{% extends "main_base.html" %}
+{% block nav %}
+<header class="masthead mb-auto">
+    <div class="inner">
+        <h3 class="masthead-brand px-4">ZnajdzRosline.pl</h3>
+        <nav class="nav nav-masthead justify-content-center">
+            <a class="nav-link" href="/">Główna</a>
+            <a class="nav-link" href="/przeznaczenia/">Przeznaczenia</a>
+            <a class="nav-link" href="/kontakt/">Kontkakt</a>
+            <a class="nav-link active" href="/accounts/login/">Logowanie</a>
+        </nav>
+    </div>
+</header>
+{%  endblock %}
+{% block content %}
+<main role="main" class="inner cover">
+    <h1 class="cover-heading">Rejestracja</h1>
+    <p class="lead">Podaj podstawowe dane:</p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="exampleInputUsername1">Nazwa użytkownika</label>
+            <input type="text" class="form-control col-5 mx-auto" id="exampleInputUsername1" aria-describedby="emailHelp"
+                   placeholder="Login" name="username" value="{{username}}">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Hasło</label>
+            <input type="email" class="form-control col-5 mx-auto" id="exampleInputEmail1" placeholder="Adres e-mail"
+                   name="email" value="{{email}}">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">Hasło</label>
+            <input type="password" class="form-control col-5 mx-auto" id="exampleInputPassword1" placeholder="Hasło"
+                   name="password1">
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword2">Hasło</label>
+            <input type="password" class="form-control col-5 mx-auto" id="exampleInputPassword2" placeholder="Ponownie hasło"
+                   name="password2">
+        </div>
+        <small id="formHelp" class="form-text text-muted" style="margin-top: 20px;margin-bottom: 20px">
+        {% for err in error %}
+            <p>{{err}}</p>
+        {% endfor %}
+        </small>
+        <button type="submit" class="btn btn-lg btn-success">Zarejestruj</button>
+    </form>
+
+</main>
+{%  endblock %}
