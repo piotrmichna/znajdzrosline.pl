@@ -16,10 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from wdp.views import Main
+from wdp.views import Main, Przeznaczenia, Kontakt
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', Main.as_view(), name='main'),
+    path('przeznaczenia/', Przeznaczenia.as_view(), name='przeznaczenia'),
+    path('kontakt/', Kontakt.as_view(), name='kontakt'),
     path('botanical/', include('botanical.urls')),
 ]
