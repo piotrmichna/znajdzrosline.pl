@@ -45,9 +45,38 @@
         </tbody>
     </table>
 </div>
+{% if paginator.page_num > 1 %}
+
 <div class="row">
-    <div class="col-md-12" >
-        <p style="text-align: center">numeracja strny</p>
-    </div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            {% for page in paginator.page_nav %}
+            {% if page == paginator.page %}
+            {% if forloop.first %}
+            <li class="page-item disabled"><span class="page-link"> < Poprzednia </span></li>
+            {% endif %}
+            <li class="page-item active">
+                    <span class="page-link bg-success text-light">{{ page }}<span class="sr-only ">(current)</span>
+                    </span>
+            </li>
+            {% if forloop.last %}
+            <li class="page-item disabled"><span class="page-link"> Następna > </span></li>
+            {% endif %}
+            {% else %}
+            {% if forloop.first %}
+            <li class="page-item"><a class="page-link text-success" href="/botanical/list/{{ paginator.page_prev }}"> <
+                Poprzednia </a></li>
+            {% endif %}
+            <li class="page-item"><a class="page-link text-success" href="/botanical/list/{{ page }}">{{ page }}</a>
+            </li>
+            {% if forloop.last %}
+            <li class="page-item"><a class="page-link text-success" href="/botanical/list/{{ paginator.page_next }}">
+                Następna > </a></li>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+        </ul>
+    </nav>
 </div>
+{% endif %}
 {% endblock %}
