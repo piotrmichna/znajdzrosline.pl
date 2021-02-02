@@ -1,0 +1,53 @@
+{% extends "botanical_base.html" %}
+{% block title %}Katalog roślin{% endblock %}
+{% block page_title %}<h1 class="display-4">Lista rośliny</h1>{% endblock %}
+
+{% block page_description %}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Nazwa łacińska</th>
+            <th scope="col">Nazwa polska</th>
+            <th scope="col">Typ</th>
+            <th scope="col">Jadalna</th>
+            <th scope="col">Działania</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for plant in plants %}
+        <tr>
+            <th scope="row">{{plant.id}}</th>
+            <td>{{ plant.genus }}
+                {% if plant.species %} {{plant.species}} {% endif %}
+                {% if plant.cultivar %} {{plant.cultivar}} {% endif %}</td>
+            <td>{{ plant.genus.pl_name }}
+                {% if plant.species.pl_name %} {{plant.species.pl_name}} {% endif %}
+                {% if plant.cultivar %} {{plant.cultivar}} {% endif %}</td>
+            <td>{{ plant.body_type }}</td>
+            <td>{{ plant.edible_show }}</td>
+            <td>
+                <a href="{% url 'botanical-show' plant.id %}" type="button" class="btn btn-outline-secondary btn-sm">Wyświetl</a>
+                <a href="{% url 'botanical-edit' plant.id %}" type="button" class="btn btn-outline-success btn-sm">Edytuj</a>
+                <a href="{% url 'botanical-delete' plant.id %}" type="button" class="btn btn-outline-danger btn-sm">Usuń</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <th scope="row">#</th>
+            <td colspan="4" style="align: center">Brak wyników</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <div class="col-md-12" >
+        <p style="text-align: center">numeracja strny</p>
+    </div>
+</div>
+{% endblock %}
