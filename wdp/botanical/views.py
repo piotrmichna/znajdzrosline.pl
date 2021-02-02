@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
-from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar, PlantBodyType
+from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar, PlantBodyType, PlntLibraries
 
 
 class BotanicalView(View):
@@ -137,8 +137,66 @@ class BotanicalTypeAddView(View):
 
     def post(self, request):
         body_type = request.POST.get('body_type')
+        edible = request.POST.get('edible')
+
+        error = []
         if body_type:
-            request.sesion['body_type'] = body_type
+            try:
+                body = PlantBodyType.objects.get(body_type=body_type)
+            except PlantBodyType.DoesNotExist:
+                error.append('Wybierz nazwę typu.')
+                body = None
+
+        if edible in ['Tak', 'Nie']:
+            if edible == "Tak":
+                edible = True
+            else:
+                edible = False
+            if body:
+                valid = False
+                if request.session.get('genus_name'):
+                    try:
+                        genus = BotSystGenus.objects.get(lac_name=request.session['genus_name'])
+                        valid = True
+                    except BotSystGenus.DoesNotExist:
+                        valid = False
+
+                if request.session.get('species_name') and valid:
+                    try:
+                        species = BotSystSpecies.objects.get(genus=genus, lac_name=request.session['species_name'])
+                    except BotSystSpecies.DoesNotExist:
+                        valid = False
+                        species = None
+                elif valid:
+                    species = None
+
+                if request.session.get('cultivar_name') and species:
+                    try:
+                        cultivar = BotSystCultivar.objects.get(species=species, cultivar=request.session['cultivar'])
+                    except BotSystCultivar.DoesNotExist:
+                        valid = False
+                        cultivar = None
+                else:
+                    cultivar = None
+
+                if valid:
+                    plant = PlntLibraries.objects.create(genus=genus,
+                                                         species=species,
+                                                         cultivar=cultivar,
+                                                         body_type=body,
+                                                         edible=edible)
+                    return HttpResponse(f"""Dodano roślinę {plant.genus} {plant.species}
+                                            {plant.cultivar} Typu: {plant.body_type}""")
+
+        body_types = PlantBodyType.objects.all()
+        plant_name = request.POST.get('plant_name')
+        edible = None
+        error.append('nie wybrano przydatność do jedzenia.')
+        return render(request, 'botanical_sel_type.html', {'body_type': body_type,
+                                                           'body_types': body_types,
+                                                           'plant_name': plant_name,
+                                                           'edible': edible,
+                                                           'error': error})
 
 
 class BotanicalAddTypeView(View):
