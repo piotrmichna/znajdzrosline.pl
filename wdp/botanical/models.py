@@ -31,6 +31,6 @@ class PlntLibraries(models.Model):
     genus = models.ForeignKey(BotSystGenus, on_delete=models.CASCADE)
     species = models.ForeignKey(BotSystSpecies, on_delete=models.CASCADE, null=True)
     cultivar = models.ForeignKey(BotSystCultivar, on_delete=models.CASCADE, null=True)
-    body_type = models.OneToOneField(PlantBodyType, on_delete=models.CASCADE, null=True)
+    body_type = models.ForeignKey(PlantBodyType, on_delete=models.CASCADE, null=True)
     edible = models.BooleanField(default=False)
     # plant= PlnatLibraries.objects.filter(body_type__body_type='Drzewo iglaste', genus__lac_name='Acer')
