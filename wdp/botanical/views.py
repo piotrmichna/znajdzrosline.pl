@@ -127,8 +127,12 @@ class BotanicalAddView(View):
 
 class BotanicalTypeAddView(View):
     def get(self, request):
-        body_types = PlantBodyType.objects.all()
         plant_name = request.session.get('genus_name')
+        if not plant_name:
+            return redirect('botanical')
+
+        body_types = PlantBodyType.objects.all()
+
         plant_name += f" {request.session.get('species_name')}"
         if request.session.get('cultivar_name'):
             plant_name += f" {request.session.get('cultivar_name')}"
