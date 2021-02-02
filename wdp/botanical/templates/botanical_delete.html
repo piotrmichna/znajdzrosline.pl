@@ -1,6 +1,6 @@
 {% extends "botanical_base.html" %}
 {% block title %}Katalog roślin{% endblock %}
-{% block page_title %}<h1 class="display-4">Edycja rośliny</h1>{% endblock %}
+{% block page_title %}<h1 class="display-4">Usunięcie rośliny</h1>{% endblock %}
 
 {% block page_description %}
 {% endblock %}
@@ -33,7 +33,8 @@
             <li>Pokrój: <strong>{{plant.body_type}}</strong></li>
             <li>Przydatność do jedzenia: <strong>{{plant.edible_show}}</strong></li>
         </ul>
+        <p><a class="btn btn-danger btn-lg mt-4" href="#" role="button"> Usuń roślinę &raquo;</a></p>
     </div>
-    <a class="btn btn-warning btn-lg mt-4" href="#" role="button"> Usuń roślinę &raquo;</a>
+
 </div>
 {% endblock %}
