@@ -1,3 +1,4 @@
+from django.db.models import F
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
@@ -259,7 +260,20 @@ class BotanicalPlantDeleteView(View):
         except PlntLibraries.DoesNotExist:
             plant = None
         return render(request, 'botanical_delete.html', {'plant': plant,
-                                                         'plant_delete':'tak'})
+                                                         'plant_delete': 'tak'})
+
+
+class BotanicalListView(View):
+    def get(self, request):
+        # plants1 = PlntLibraries.objects.filter(cultivar__isnull=True).order_by('genus__lac_name',
+        #                                                                        'species__lac_name')
+        F('price').desc(nulls_last=False)
+        plants = PlntLibraries.objects.order_by('genus__lac_name',
+                                                F('species__lac_name').desc(nulls_last=False),
+                                                F('cultivar__cultivar').desc(nulls_last=False))
+
+        # plants = plants1.union(plants2)
+        return render(request, 'botanical_list.html', {'plants': plants})
 
 
 class BotanicalAddTypeView(View):
