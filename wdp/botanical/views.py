@@ -140,6 +140,7 @@ class BotanicalTypeAddView(View):
         edible = request.POST.get('edible')
 
         error = []
+        error.append(edible)
         if body_type:
             try:
                 body = PlantBodyType.objects.get(body_type=body_type)
@@ -147,11 +148,12 @@ class BotanicalTypeAddView(View):
                 error.append('Wybierz nazwę typu.')
                 body = None
 
-        if edible in ['Tak', 'Nie']:
+        if edible:
             if edible == "Tak":
                 edible = True
             else:
                 edible = False
+
             if body:
                 valid = False
                 if request.session.get('genus_name'):
@@ -160,6 +162,7 @@ class BotanicalTypeAddView(View):
                         valid = True
                     except BotSystGenus.DoesNotExist:
                         valid = False
+                        error.append("Błędna nazwa rodzaju")
 
                 if request.session.get('species_name') and valid:
                     try:
@@ -167,19 +170,28 @@ class BotanicalTypeAddView(View):
                     except BotSystSpecies.DoesNotExist:
                         valid = False
                         species = None
+                        error.append("Błędna nazwa gatunku")
                 elif valid:
                     species = None
 
                 if request.session.get('cultivar_name') and species:
-                    try:
-                        cultivar = BotSystCultivar.objects.get(species=species, cultivar=request.session['cultivar'])
-                    except BotSystCultivar.DoesNotExist:
+                    if BotSystCultivar.objects.filter(species=species,
+                                                      cultivar=request.session['cultivar_name']).count():
+                        error.append('Roślina o podanej odmianie zoostała już dodana')
                         valid = False
-                        cultivar = None
+                    else:
+                        cultivar = BotSystCultivar.objects.create(species=species,
+                                                                  cultivar=request.session['cultivar_name'])
                 else:
                     cultivar = None
 
                 if valid:
+                    if request.session.get('genus_name'):
+                        del request.session['genus_name']
+                    if request.session.get('species_name'):
+                        del request.session['species_name']
+                    if request.session.get('cultivar_name'):
+                        del request.session['cultivar_name']
                     plant = PlntLibraries.objects.create(genus=genus,
                                                          species=species,
                                                          cultivar=cultivar,
@@ -187,11 +199,12 @@ class BotanicalTypeAddView(View):
                                                          edible=edible)
                     return HttpResponse(f"""Dodano roślinę {plant.genus} {plant.species}
                                             {plant.cultivar} Typu: {plant.body_type}""")
+        else:
+            edible = None
+            error.append('nie wybrano przydatność do jedzenia.')
 
         body_types = PlantBodyType.objects.all()
         plant_name = request.POST.get('plant_name')
-        edible = None
-        error.append('nie wybrano przydatność do jedzenia.')
         return render(request, 'botanical_sel_type.html', {'body_type': body_type,
                                                            'body_types': body_types,
                                                            'plant_name': plant_name,
