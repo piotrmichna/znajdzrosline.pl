@@ -1,0 +1,33 @@
+{% extends "botanical_base.html" %}
+{% block page_title %}<h1 class="display-5">Typ rośliny</h1>{%  endblock %}
+{% block page_description %}
+<ul>
+    <li>Dodanie typu odpowiedniego dla rośliny: <strong>{{request.session.genus_name}}
+        {{request.session.species_name}} {{request.session.cultivar_name}}</strong></li>
+    <li>Np. Drzewa iglaste, Krzewy liścizate, Byliny...</li>
+    <li>Nazwy typów piszemy z dużej litery.</li>
+</ul>
+{%  endblock %}
+{% block page_content %}
+<div class="row">
+    <div class="col-mgit d-4">
+        <h2>Typ rośliny</h2>
+        <form class="form-inline my-2 my-lg-0" method="POST">
+            {% csrf_token %}
+            <input class="form-control mr-sm-2" type="text" name="body_type" value="{{ body_type }}"
+                   placeholder="Typ rośliny" aria-label="Typ rośliny">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Zapisz</button>
+        </form>
+    </div>
+</div>
+{% if error %}
+<div class="row">
+    <div class="col-md-4">
+        <h5 style="margin-top: 10px; color: #772222;">Błąd</h5>
+        {% for er in error %}
+        <p style="color: #772222;">{{ er }}</p>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{%  endblock %}
