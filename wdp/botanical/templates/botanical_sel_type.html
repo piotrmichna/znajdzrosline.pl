@@ -22,10 +22,10 @@
             <div class="input-group-prepend">
                 <label class="input-group-text" for="inputGroupSelect01">Nazwa typu</label>
             </div>
-            <select class="custom-select" id="inputGroupSelect01" name="genus_name">
+            <select class="custom-select" id="inputGroupSelect01" name="body_type">
                 {% for body in body_types %}
                 {% if forloop.first %}
-                {% if body_type %}
+                {% if body_type == None %}
                 <option>Wybierz</option>
                 {% endif %}
                 {% endif %}
@@ -46,7 +46,7 @@
         <div class="input-group mb-4">
 
             <div class="input-group-prepend">
-                <label class="input-group-text" for="inputGroupSelect02">Roślina jadalna</label>
+                <label class="input-group-text" for="inputGroupSelect02">Przydatność do jedzenia</label>
             </div>
             <select class="custom-select" id="inputGroupSelect02" name="edible">
                 {% if edible == "Tak" %}
@@ -61,7 +61,18 @@
         </div>
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-md-4">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect03">Nazwa rośliny</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect03" name="plant_name" value="plant_name">
+                    <option>{{plant_name}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
     {% if error %}
     <div class="row">
         <div class="col-md-4">
@@ -72,17 +83,5 @@
         </div>
     </div>
     {% endif %}
-    <div class="row">
-        <div class="col-md-4">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <label class="input-group-text" for="inputGroupSelect03">Nazwa rośliny</label>
-                </div>
-                <select class="custom-select" id="inputGroupSelect03" name="genus_name" disabled>
-                    <option>{{plant_name}}</option>
-                </select>
-            </div>
-        </div>
-    </div>
 </form>
 {%  endblock %}
