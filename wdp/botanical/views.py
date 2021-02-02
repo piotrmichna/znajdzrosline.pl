@@ -275,9 +275,9 @@ class BotanicalListView(View):
                                                     F('species__lac_name').desc(nulls_last=False),
                                                     F('cultivar__cultivar').desc(nulls_last=False)).count()
         if not page:
-            page = 0
+            page = 1
         paginator = {}
-        plants_on_page = 2
+        plants_on_page = 5
         paginator['page_num'] = ceil(plants_num / plants_on_page)
         if page > paginator['page_num']:
             page = paginator['page_num']
