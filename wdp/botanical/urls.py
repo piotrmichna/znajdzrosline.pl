@@ -1,10 +1,11 @@
 from django.urls import path
 
 from botanical.views import (BotanicalView, BotanicalAddView, BotanicalAddGenusView, BotanicalAddSpeciesView,
-                             BotanicalAddClear, BotanicalTypeAddView, BotanicalAddTypeView)
+                             BotanicalAddClear, BotanicalTypeAddView, BotanicalAddTypeView, PlanicalPlantShowView)
 
 urlpatterns = [
     path('', BotanicalView.as_view(), name='botanical'),
+    path('show/<int:plant_id>/', PlanicalPlantShowView.as_view(), name='botanical-show'),
     path('add/', BotanicalAddView.as_view(), name='botanical-add'),
     path('addtype/', BotanicalTypeAddView.as_view(), name='botanical-type-add'),
     path('add/clear/', BotanicalAddClear.as_view(), name='botanical-add-clear'),
