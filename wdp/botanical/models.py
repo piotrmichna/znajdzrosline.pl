@@ -16,15 +16,24 @@ class BotSystSpecies(models.Model):
     pl_name = models.CharField(max_length=32, null=False, verbose_name='Nazwa polska')
     hybrid = models.BooleanField(null=True, verbose_name='Mieszaniec')
 
+    def __str__(self):
+        return self.lac_name
+
 
 class BotSystCultivar(models.Model):
     species = models.ForeignKey(BotSystSpecies, on_delete=models.CASCADE)
     cultivar = models.CharField(max_length=32, null=False, verbose_name='Odmiana')
 
+    def __str__(self):
+        return self.cultivar
+
 
 class PlantBodyType(models.Model):
     body_type = models.CharField(max_length=32, null=False)
     lp = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return self.body_type
 
 
 class PlntLibraries(models.Model):
