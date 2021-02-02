@@ -1,3 +1,5 @@
+from math import ceil
+
 from django.db.models import F
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -264,16 +266,35 @@ class BotanicalPlantDeleteView(View):
 
 
 class BotanicalListView(View):
-    def get(self, request):
+    def get(self, request, page):
+
         # plants1 = PlntLibraries.objects.filter(cultivar__isnull=True).order_by('genus__lac_name',
         #                                                                        'species__lac_name')
-        F('price').desc(nulls_last=False)
+        # plants = plants1.union(plants2)
+        plants_num = PlntLibraries.objects.order_by('genus__lac_name',
+                                                    F('species__lac_name').desc(nulls_last=False),
+                                                    F('cultivar__cultivar').desc(nulls_last=False)).count()
+        if not page:
+            page = 0
+        paginator = {}
+        plants_on_page = 2
+        paginator['page_num'] = ceil(plants_num / plants_on_page)
+        if page > paginator['page_num']:
+            page = paginator['page_num']
+        paginator['page'] = page
+        if paginator['page_num'] > 1:
+            paginator['page_prev'] = page - 1
+            paginator['page_next'] = page + 1
+            paginator['page_nav'] = []
+            for st in range(1, paginator['page_num'] + 1):
+                paginator['page_nav'].append(st)
+
         plants = PlntLibraries.objects.order_by('genus__lac_name',
                                                 F('species__lac_name').desc(nulls_last=False),
-                                                F('cultivar__cultivar').desc(nulls_last=False))
+                                                F('cultivar__cultivar').desc(nulls_last=False))[
+                 (page - 1) * plants_on_page:page * plants_on_page]
 
-        # plants = plants1.union(plants2)
-        return render(request, 'botanical_list.html', {'plants': plants})
+        return render(request, 'botanical_list.html', {'plants': plants, 'paginator': paginator})
 
 
 class BotanicalAddTypeView(View):
