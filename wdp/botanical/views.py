@@ -235,6 +235,29 @@ class BotanicalPlantEditView(View):
         return render(request, 'botanical_edit.html', {'plant': plant})
 
 
+class BotanicalPlantDeleteView(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        return render(request, 'botanical_delete.html', {'plant': plant})
+
+    def post(self, request, plant_id):
+        if request.POST.get('plant_delete'):
+            plant = PlntLibraries.objects.get(id=plant_id)
+            plant.delete()
+            return redirect('botanical')
+
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+        return render(request, 'botanical_delete.html', {'plant': plant,
+                                                         'plant_delete':'tak'})
+
+
 class BotanicalAddTypeView(View):
     def get(self, request):
         return render(request, 'botanical_add_body_type.html')
