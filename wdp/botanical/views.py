@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
-from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar
+from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar, PlantBodyType
 
 
 class BotanicalView(View):
@@ -57,26 +57,8 @@ class BotanicalAddView(View):
     def post(self, request):
         error = []
         plant_name = request.POST.get('plant_name')
-        if plant_name:
-            genus = BotSystGenus.objects.get(lac_name=request.session.get('genus_name'))
-            species = BotSystSpecies.objects.get(genus=genus, lac_name=request.session.get('species_name'))
-            cultivar = request.session.get('cultivar_name')
-            if genus:
-                if species:
-                    if cultivar:
-                        cultivar = BotSystCultivar.objects.create(species=species, cultivar=cultivar)
-                        del request.session['cultivar_name']
-                        del request.session['genus_name']
-                        del request.session['species_name']
-                        return HttpResponse(
-                            f"Utworzono roślinę: {genus.lac_name} {species.lac_name} {cultivar.cultivar}")
-                    else:
-                        del request.session['genus_name']
-                        del request.session['species_name']
-                        return HttpResponse(f"Utworzono roślinę: {genus.lac_name} {species.lac_name}")
-                else:
-                    del request.session['genus_name']
-                    return HttpResponse(f"Utworzono roślinę: {genus.lac_name}")
+        if plant_name and request.session.get('genus_name'):
+            return redirect('botanical-type-add')
 
         if not request.session.get('genus_name'):
             genus_name = request.POST.get('genus_name')
@@ -137,11 +119,47 @@ class BotanicalAddView(View):
                     request.session['cultivar_name'] = cultivar_name
                 else:
                     error.append('Roślina o tej odmianie już istnieje!')
-            cultivar = BotSystCultivar.objects.filter(species=species)
             return render(request, 'botanical_sel_cultivar.html', {'genus': genus,
                                                                    'species': species,
                                                                    'cultivar': cultivar_name,
                                                                    'error': error})
+
+
+class BotanicalTypeAddView(View):
+    def get(self, request):
+        body_types = PlantBodyType.objects.all()
+        plant_name = request.session.get('genus_name')
+        plant_name += f" {request.session.get('species_name')}"
+        if request.session.get('cultivar_name'):
+            plant_name += f" {request.session.get('cultivar_name')}"
+        return render(request, 'botanical_sel_type.html', {'body_types': body_types,
+                                                           'plant_name': plant_name})
+
+    def post(self, request):
+        body_type = request.POST.get('body_type')
+        if body_type:
+            request.sesion['body_type'] = body_type
+
+
+class BotanicalAddTypeView(View):
+    def get(self, request):
+        return render(request, 'botanical_add_body_type.html')
+
+    def post(self, request):
+        body_type = request.POST.get('body_type')
+        error = []
+        if len(body_type) > 4:
+            if PlantBodyType.objects.filter(body_type=body_type).count():
+                error.append('Typ już istnieje')
+            else:
+                lp = PlantBodyType.objects.all().count()
+                lp += 1
+                PlantBodyType.objects.create(body_type=body_type, lp=lp)
+                return redirect('botanical-type-add')
+        else:
+            error.append("Nie wypełniono typu lub jest krótszy niż 5 liter.")
+            return render(request, 'botanical_add_body_type.html', {'body_type': body_type,
+                                                                    'error': error})
 
 
 class BotanicalAddGenusView(View):
