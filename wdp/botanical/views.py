@@ -225,6 +225,16 @@ class PlanicalPlantShowView(View):
         return render(request, 'botanical_show.html', {'plant': plant})
 
 
+class BotanicalPlantEditView(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        return render(request, 'botanical_edit.html', {'plant': plant})
+
+
 class BotanicalAddTypeView(View):
     def get(self, request):
         return render(request, 'botanical_add_body_type.html')
