@@ -247,6 +247,10 @@ class BotanicalPlantDeleteView(View):
     def post(self, request, plant_id):
         if request.POST.get('plant_delete'):
             plant = PlntLibraries.objects.get(id=plant_id)
+            if plant.cultivar:
+                cultivar = BotSystCultivar.objects.get(id=plant.cultivar.id)
+                cultivar.delete()
+
             plant.delete()
             return redirect('botanical')
 
