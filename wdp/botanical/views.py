@@ -144,7 +144,6 @@ class BotanicalTypeAddView(View):
         edible = request.POST.get('edible')
 
         error = []
-        error.append(edible)
         if body_type:
             try:
                 body = PlantBodyType.objects.get(body_type=body_type)
@@ -201,8 +200,8 @@ class BotanicalTypeAddView(View):
                                                          cultivar=cultivar,
                                                          body_type=body,
                                                          edible=edible)
-                    return HttpResponse(f"""Dodano roślinę {plant.genus} {plant.species}
-                                            {plant.cultivar} Typu: {plant.body_type}""")
+                    return redirect(f'/botanical/show/{plant.id}/')
+
         else:
             edible = None
             error.append('nie wybrano przydatność do jedzenia.')
