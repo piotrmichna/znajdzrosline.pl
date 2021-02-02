@@ -215,7 +215,7 @@ class BotanicalTypeAddView(View):
                                                            'error': error})
 
 
-class PlanicalPlantShowView(View):
+class BotanicalPlantShowView(View):
     def get(self, request, plant_id):
         try:
             plant = PlntLibraries.objects.get(id=plant_id)
