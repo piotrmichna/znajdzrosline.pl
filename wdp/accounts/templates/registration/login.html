@@ -4,10 +4,10 @@
     <div class="inner">
         <h3 class="masthead-brand px-4">ZnajdzRosline.pl</h3>
         <nav class="nav nav-masthead justify-content-center">
-            <a class="nav-link" href="/">Główna</a>
-            <a class="nav-link" href="/przeznaczenia/">Przeznaczenia</a>
-            <a class="nav-link" href="/kontakt/">Kontkakt</a>
-            <a class="nav-link active" href="/accounts/login/">Logowanie</a>
+            <a class="nav-link" href="{% url 'main' %}">Główna</a>
+            <a class="nav-link" href="{% url 'przeznaczenia' %}">Przeznaczenia</a>
+            <a class="nav-link" href="{% url 'kontakt' %}">Kontkakt</a>
+            <a class="nav-link active" href="{% url 'login' %}">Logowanie</a>
         </nav>
     </div>
 </header>
@@ -33,7 +33,7 @@
         <button type="submit" class="btn btn-lg btn-success">Zaloguj</button>
     </form>
     <small id="formHelp" class="form-text text-muted" style="margin-top: 20px">
-        <a href="{% url 'signup' %}">Zarejestru się</a> | <a href="#">Odzyskiwanie hasła</a>
+        <a href="{% url 'signup' %}">Zarejestru się</a> | <span class="disabled" href="#">Odzyskiwanie hasła</span>
     </small>
 </main>
 {%  endblock %}
