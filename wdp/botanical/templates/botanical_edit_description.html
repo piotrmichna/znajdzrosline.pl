@@ -23,15 +23,15 @@
 <form method="POST">
     {% csrf_token %}
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-9">
             <div class="form-group">
                 <label for="Text1"><h4>Opis botaniczny</h4></label>
-                <textarea name="botanical" class="form-control" id="Text1" rows="5">{% if descriptions.botanical != None %}{{ descriptions.botanical }}{% endif %}</textarea>
+                <textarea name="botanical" class="form-control" id="Text1" rows="6">{% if descriptions.botanical != None %}{{ descriptions.botanical }}{% endif %}</textarea>
             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-9">
             <div class="form-group">
                 <label for="Text2"><h4>Opis uprawy</h4></label>
                 <textarea name="cultivation" class="form-control" id="Text2" rows="3">{% if descriptions.cultivation != None %}{{ descriptions.cultivation }}{% endif %}</textarea>
@@ -39,7 +39,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-9">
             <div class="form-group">
                 <label for="Text3"><h4>Opis zastosowania</h4></label>
                 <textarea name="destiny" class="form-control" id="Text3" rows="3">{% if descriptions.destiny != None %}{{ descriptions.destiny }}{% endif %}</textarea>
@@ -48,7 +48,7 @@
     </div>
     {% if error.0 %}
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-9">
             <div class="form-group" style="color: #721c24">
                 <h4>Błędy</h4>
                 <ul>
@@ -62,7 +62,7 @@
     </div>
         {% if descriptions.agree %}
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <div class="form-group">
                     <input type="hidden" name="agree" value="{{descriptions.agree}}">
                     <button class="btn btn-warning btn-lg my-3" type="submit"> Zapisz. Jestem pewien! &raquo;</button>
@@ -71,7 +71,7 @@
         </div>
         {% else %}
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-9">
                 <div class="form-group">
                     <button class="btn btn-success btn-lg my-3" type="submit"> Wyślij zmiany &raquo;</button>
                 </div>
@@ -80,7 +80,7 @@
         {% endif %}
     {% else %}
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-9">
             <div class="form-group">
                 <button class="btn btn-success btn-lg my-3" type="submit"> Zapisz zmiany &raquo;</button>
             </div>
