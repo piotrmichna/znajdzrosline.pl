@@ -11,8 +11,8 @@
         <h2>Systematyka</h2>
         <ul>
             <li>Rodzaj: <strong>{{plant.genus}} ({{plant.genus.pl_name}})</strong></li>
-            <li>Gatunek: <strong>{{plant.species}} ({{plant.species.pl_name}})</strong></li>
-            <li>Odmiana: <strong>{{plant.cultivar}}</strong></li>
+            {% if plant.species != None %}<li>Gatunek: <strong>{{plant.species}} ({{plant.species.pl_name}})</strong></li>{% endif %}
+            {% if plant.cultivar != None %}<li>Odmiana: <strong>'{{plant.cultivar}}'</strong></li>{% endif %}
         </ul>
     </div>
 </div>
