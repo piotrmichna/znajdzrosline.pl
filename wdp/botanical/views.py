@@ -347,6 +347,7 @@ class PlantEditBody(View):
                     change += 1
             if change:
                 plant.save()
+                return redirect('/botanical/list/1/')
             else:
                 error.append('Nie wprowadzono zmian.')
 
