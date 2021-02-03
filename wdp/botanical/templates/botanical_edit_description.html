@@ -9,11 +9,11 @@
 <div class="row">
     <div class="col-md-6">
         <h3>{{plant.genus}} {% if plant.species != None %}{{plant.species}}{% endif %}
-            {% if plant.cultivar != None %}{{plant.cultivar}}{% endif %}</h3>
+            {% if plant.cultivar != None %}'{{plant.cultivar}}'{% endif %}</h3>
         <ul>
             <li>Nazwa polska:
                 <strong>{{plant.genus.pl_name}} {% if plant.species != None %}{{plant.species.pl_name}}{% endif %}
-                    {% if plant.cultivar != None %}{{plant.cultivar}}{% endif %}</strong>
+                    {% if plant.cultivar != None %}'{{plant.cultivar}}'{% endif %}</strong>
             </li>
             <li>Typ rośliny: <strong>{{plant.body_type}}</strong></li>
             <li>Przydatność do jedzenia: <strong>{{plant.edible_show}}</strong></li>
