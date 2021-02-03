@@ -1,0 +1,57 @@
+{% extends "botanical_base.html" %}
+{% block title %}Katalog roślin{% endblock %}
+{% block page_title %}<h1 class="display-4">Edycja opisów rośliny</h1>{% endblock %}
+
+{% block page_description %}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-6">
+        <h3>{{plant.genus}} {% if plant.species != None %}{{plant.species}}{% endif %}
+            {% if plant.cultivar != None %}{{plant.cultivar}}{% endif %}</h3>
+        <ul>
+            <li>Nazwa polska:
+                <strong>{{plant.genus.pl_name}} {% if plant.species != None %}{{plant.species.pl_name}}{% endif %}
+                    {% if plant.cultivar != None %}{{plant.cultivar}}{% endif %}</strong>
+            </li>
+            <li>Typ rośliny: <strong>{{plant.body_type}}</strong></li>
+            <li>Przydatność do jedzenia: <strong>{{plant.edible_show}}</strong></li>
+        </ul>
+    </div>
+</div>
+<form method="POST">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1"><h4>Opis botaniczny</h4></label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5">{% if descriptions.botanical != None %}{{ descriptions.botanical }}{% endif %}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="exampleFormControlTextarea2"><h4>Opis uprawy</h4></label>
+                <textarea class="form-control" id="exampleFormControlTextarea2" rows="3">{% if descriptions.cultivation != None %}{{ descriptions.cultivation }}{% endif %}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="exampleFormControlTextarea3"><h4>Opis zastosowania</h4></label>
+                <textarea class="form-control" id="exampleFormControlTextarea3" rows="3">{% if descriptions.destiny != None %}{{ descriptions.destiny }}{% endif %}</textarea>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <button class="btn btn-success btn-lg my-3" type="submit"> Zapisz zmiany &raquo;</button>
+            </div>
+        </div>
+    </div>
+
+</form>
+{% endblock %}
