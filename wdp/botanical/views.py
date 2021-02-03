@@ -5,7 +5,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
-from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar, PlantBodyType, PlntLibraries
+from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar, PlantBodyType, PlntLibraries, \
+    PlantDescriptions
 
 
 class BotanicalView(View):
@@ -253,6 +254,50 @@ class PlantEditDescriptions(View):
 
         return render(request, 'botanical_edit_description.html', {'plant': plant,
                                                                    'descriptions': descriptions})
+
+    def post(self, request, plant_id):
+        error = []
+        descriptions = {}
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+            error.append('Nie znaleziono rośliny.')
+
+        if plant:
+            if plant.description:
+                description = PlantDescriptions.objects.get(id=plant.description.id)
+            else:
+                description = PlantDescriptions()
+            if request.POST.get('destiny'):
+                descriptions['destiny'] = request.POST.get('destiny')
+                description.destiny = request.POST.get('destiny')
+            else:
+                error.append("Nie wypełniono opisu zastosowania.")
+
+            if request.POST.get('cultivation'):
+                descriptions['cultivation'] = request.POST.get('cultivation')
+                description.cultivation = request.POST.get('cultivation')
+            else:
+                error.append("Nie wypełniono opisu uprawy.")
+
+            if request.POST.get('botanical'):
+                descriptions['botanical'] = request.POST.get('botanical')
+                description.botanical = request.POST.get('botanical')
+                descriptions['agree'] = 'agree1'
+            else:
+                error.append("Nie wypełniono opisu botanicznego. Jest wymagany!")
+
+            if len(error) == 0 or 'agree1' == request.POST.get('agree'):
+                description.save()
+                if not plant.description:
+                    plant.description = description
+                    plant.save()
+                return redirect('/botanical/list/1/')
+
+        return render(request, 'botanical_edit_description.html', {'plant': plant,
+                                                                   'descriptions': descriptions,
+                                                                   'error': error})
 
 
 class BotanicalPlantDeleteView(View):
