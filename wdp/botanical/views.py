@@ -309,7 +309,7 @@ class PlantEditBody(View):
 
         edible = ''
         if plant:
-            body_type = plant.body_type
+            body_type = plant.body_type.body_type
             if plant.edible:
                 edible = 'checked'
 
@@ -317,9 +317,45 @@ class PlantEditBody(View):
         return render(request, 'botanical_edit_body.html', {'plant': plant,
                                                             'body_types': body_types,
                                                             'body_type': body_type,
-                                                            'edibe': edible})
+                                                            'edible': edible})
 
-    
+    def post(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        error = []
+        if plant:
+            change = 0
+            body_type = request.POST.get('body_type')
+            if request.POST.get('body_type'):
+                if plant.body_type.body_type != request.POST.get('body_type'):
+                    try:
+                        plant.body_type = PlantBodyType.objects.get(body_type=request.POST.get('body_type'))
+                        change += 1
+                    except PlantBodyType.DoesNotExist:
+                        error.append('Brak typu rośliny.')
+            edible = request.POST.get('edible')
+            if edible:
+                if not plant.edible:
+                    plant.edible = True
+                    change += 1
+            else:
+                if plant.edible:
+                    plant.edible = False
+                    change += 1
+            if change:
+                plant.save()
+            else:
+                error.append('Nie wprowadzono zmian.')
+
+        body_types = PlantBodyType.objects.order_by('lp').all()
+        return render(request, 'botanical_edit_body.html', {'plant': plant,
+                                                            'body_types': body_types,
+                                                            'body_type': body_type,
+                                                            'edible': edible,
+                                                            'error': error})
 
 
 class BotanicalPlantDeleteView(View):
