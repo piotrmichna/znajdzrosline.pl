@@ -11,7 +11,7 @@ from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar, Plan
 
 class BotanicalView(View):
     def get(self, request):
-        plant_num = PlntLibraries.objects.all().count()
+        plant_num = PlntLibraries.objects.count()
         return render(request, 'botanical_main.html', {'plant_num': plant_num})
 
 
