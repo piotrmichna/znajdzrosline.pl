@@ -13,7 +13,7 @@
             <li>Rodzaj: <strong>{{plant.genus}} ({{plant.genus.pl_name}})</strong></li>
             <li>Gatunek: <strong>{{plant.species}} ({{plant.species.pl_name}})</strong></li>
             <li>Odmiana: <strong>{{plant.cultivar}}</strong></li>
-            <li style="list-style-type: none"><p><a class="btn btn-outline-success btn-sm mt-2" href="#" role="button"> Edytuj &raquo;</a></li>
+            <!--            <li style="list-style-type: none"><p><a class="btn btn-outline-success btn-sm mt-2" href="#" role="button"> Edytuj &raquo;</a></li>-->
         </ul>
     </div>
 </div>
@@ -24,7 +24,9 @@
             <li><strong>Botaniczny:</strong> {{plant.description.botanical}}</li>
             <li><strong>Uprawa:</strong> {{plant.description.cultivation}}</li>
             <li><strong>Przeznaczenie:</strong> {{plant.description.destiny}}</li>
-            <li style="list-style-type: none"><p><a class="btn btn-outline-success btn-sm mt-2" href="#" role="button"> Edytuj &raquo;</a></li>
+            <li style="list-style-type: none"><p><a class="btn btn-outline-success btn-sm mt-2"
+                                                    href="{% url 'botanical-edit-descriptions' plant.id %}"
+                                                    role="button"> Edytuj &raquo;</a></li>
         </ul>
     </div>
 </div>
@@ -34,7 +36,9 @@
         <ul>
             <li>Pokrój: <strong>{{plant.body_type}}</strong></li>
             <li>Przydatność do jedzenia: <strong>{{plant.edible_show}}</strong></li>
-            <li style="list-style-type: none"><p><a class="btn btn-outline-success btn-sm mt-2" href="#" role="button"> Edytuj &raquo;</a></li>
+            <li style="list-style-type: none"><p><a class="btn btn-outline-success btn-sm mt-2"
+                                                    href="{% url 'botanical-edit-body' plant.id %}" role="button">
+                Edytuj &raquo;</a></li>
         </ul>
     </div>
 </div>
