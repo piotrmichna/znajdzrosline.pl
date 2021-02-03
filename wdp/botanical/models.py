@@ -37,9 +37,9 @@ class PlantBodyType(models.Model):
 
 
 class PlantDescriptions(models.Model):
-    botanical = models.TextField()
-    cultivation = models.TextField()
-    destiny = models.TextField()
+    botanical = models.TextField(null=True)
+    cultivation = models.TextField(null=True)
+    destiny = models.TextField(null=True)
 
 
 class PlntLibraries(models.Model):

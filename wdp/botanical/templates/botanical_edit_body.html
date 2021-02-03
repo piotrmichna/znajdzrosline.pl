@@ -1,0 +1,107 @@
+{% extends "botanical_base.html" %}
+{% block title %}Katalog roślin{% endblock %}
+{% block page_title %}<h1 class="display-4">Edycja cech rośliny</h1>{% endblock %}
+
+{% block page_description %}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-6">
+        <h3>{{plant.genus}} {% if plant.species != None %}{{plant.species}}{% endif %}
+            {% if plant.cultivar != None %}{{plant.cultivar}}{% endif %}</h3>
+        <ul>
+            <li>Nazwa polska:
+                <strong>{{plant.genus.pl_name}} {% if plant.species != None %}{{plant.species.pl_name}}{% endif %}
+                    {% if plant.cultivar != None %}{{plant.cultivar}}{% endif %}</strong>
+            </li>
+
+        </ul>
+    </div>
+</div>
+<form method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Typ rośliny</h4>
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="Select01">Nazwa typu</label>
+                <select class="custom-select" id="Select01" name="body_type">
+                    {% for body in body_types %}
+                    {% if forloop.first %}
+                    {% if body_type == None %}
+                    <option>Wybierz</option>
+                    {% endif %}
+                    {% endif %}
+                    {% if body.body_type == body_type %}
+                    <option value="{{body.body_type}}" selected>{{body.body_type}}</option>
+                    {% else %}
+                    <option value="{{body.body_type}}">{{body.lp}} {{body.body_type}}</option>
+                    {% endif %}
+                    {% empty %}
+                    <option selected>Brak typów...</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row my-1">
+        <div class="col-md-6">
+            <a class="btn btn-secondary btn-sm" style="margin-top: 7px;" href="{% url 'botanical-add-type' %}" role="button">Dodaj
+            nowy typ &raquo;</a>
+        </div>
+    </div>
+    <div class="row mt-4 mb-3">
+        <div class="col-md-6">
+            <h4>Przydatność do jedzenia</h4>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="edible" value="checked" id="Check1" {{edible}}>
+                <label class="form-check-label" for="Check1">
+                    Jadalna
+                </label>
+            </div>
+        </div>
+    </div>
+    {% if error.0 %}
+    <div class="row mt-4 mb-3">
+        <div class="col-md-6">
+            <div class="form-group" style="color: #721c24">
+                <h4>Błędy</h4>
+                <ul>
+                    {% for er in error %}
+                    <li>{{er}}</li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    {% if descriptions.agree %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <input type="hidden" name="agree" value="{{descriptions.agree}}">
+                <button class="btn btn-warning btn-lg my-3" type="submit"> Zapisz. Jestem pewien! &raquo;</button>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <button class="btn btn-success btn-lg my-3" type="submit"> Wyślij zmiany &raquo;</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <button class="btn btn-success btn-lg my-3" type="submit"> Zapisz zmiany &raquo;</button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</form>
+{% endblock %}
