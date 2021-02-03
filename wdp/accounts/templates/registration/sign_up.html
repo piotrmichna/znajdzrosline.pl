@@ -19,13 +19,14 @@
     <form method="POST">
         {% csrf_token %}
         <div class="form-group">
-            <label for="exampleInputUsername1">Nazwa użytkownika</label>
-            <input type="text" class="form-control col-5 mx-auto" id="exampleInputUsername1" aria-describedby="emailHelp"
-                   placeholder="Login" name="username" value="{{username}}">
+            <label for="exampleInputLogin1">Nazwa użytkownika</label>
+            <input type="text" class="form-control col-5 mx-auto" id="exampleInputLogin1"
+                   aria-describedby="emailHelp"
+                   placeholder="Login" name="login" value="{{username}}">
         </div>
         <div class="form-group">
-            <label for="exampleInputEmail1">Hasło</label>
-            <input type="email" class="form-control col-5 mx-auto" id="exampleInputEmail1" placeholder="Adres e-mail"
+            <label for="exampleInputEmail1">Adres e-mail</label>
+            <input type="email" class="form-control col-5 mx-auto" id="exampleInputEmail1" placeholder="poczta@domena.pl"
                    name="email" value="{{email}}">
         </div>
         <div class="form-group">
@@ -34,15 +35,22 @@
                    name="password1">
         </div>
         <div class="form-group">
-            <label for="exampleInputPassword2">Hasło</label>
-            <input type="password" class="form-control col-5 mx-auto" id="exampleInputPassword2" placeholder="Ponownie hasło"
+            <label for="exampleInputPassword2">Hasło Ponownie</label>
+            <input type="password" class="form-control col-5 mx-auto" id="exampleInputPassword2"
+                   placeholder="Ponownie hasło"
                    name="password2">
         </div>
-        <small id="formHelp" class="form-text text-muted" style="margin-top: 20px;margin-bottom: 20px">
-        {% for err in error %}
-            <p>{{err}}</p>
-        {% endfor %}
-        </small>
+        <strong style="margin-top: 20px;margin-bottom: 20px">
+            {% for err in error %}
+            {% if forloop.first %}
+            <ul>
+            {% endif %}
+                <li>{{err}}</li>
+            {% if forloop.last %}
+            </ul>
+            {% endif %}
+            {% endfor %}
+        </strong>
         <button type="submit" class="btn btn-lg btn-success">Zarejestruj</button>
     </form>
 
