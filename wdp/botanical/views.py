@@ -238,6 +238,23 @@ class BotanicalPlantEditView(View):
         return render(request, 'botanical_edit.html', {'plant': plant})
 
 
+class PlantEditDescriptions(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+        descriptions = {}
+        if plant:
+            if plant.description:
+                descriptions = {'botanical': plant.description.botanical,
+                                'cultivation': plant.description.cultivation,
+                                'destiny': plant.description.destiny}
+
+        return render(request, 'botanical_edit_description.html', {'plant': plant,
+                                                                   'descriptions': descriptions})
+
+
 class BotanicalPlantDeleteView(View):
     def get(self, request, plant_id):
         try:
