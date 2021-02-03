@@ -278,8 +278,10 @@ class BotanicalListView(View):
             page = 1
         paginator = {}
         plants_on_page = 5
+        if plants_num == 0:
+            plants_num = 1
         paginator['page_num'] = ceil(plants_num / plants_on_page)
-        if page > paginator['page_num']:
+        if (paginator['page_num'] > 0) and (page > paginator['page_num']):
             page = paginator['page_num']
         paginator['page'] = page
         if paginator['page_num'] > 1:
