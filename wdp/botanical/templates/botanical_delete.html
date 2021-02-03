@@ -1,0 +1,48 @@
+{% extends "botanical_base.html" %}
+{% block title %}Katalog roślin{% endblock %}
+{% block page_title %}<h1 class="display-4">Usunięcie rośliny</h1>{% endblock %}
+
+{% block page_description %}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-9">
+        <h2>Systematyka</h2>
+        <ul>
+            <li>Rodzaj: <strong>{{plant.genus}} ({{plant.genus.pl_name}})</strong></li>
+            <li>Gatunek: <strong>{{plant.species}} ({{plant.species.pl_name}})</strong></li>
+            <li>Odmiana: <strong>'{{plant.cultivar}}'</strong></li>
+        </ul>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <h2>Opis</h2>
+        <ul>
+            <li><strong>Botaniczny:</strong> {{plant.description.botanical}}</li>
+            <li><strong>Uprawa:</strong> {{plant.description.cultivation}}</li>
+            <li><strong>Przeznaczenie:</strong> {{plant.description.destiny}}</li>
+        </ul>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <h2>Pokrój</h2>
+        <ul>
+            <li>Pokrój: <strong>{{plant.body_type}}</strong></li>
+            <li>Przydatność do jedzenia: <strong>{{plant.edible_show}}</strong></li>
+        </ul>
+        <form method="post">
+            {% csrf_token %}
+            {% if plant_delete %}
+            <input type="hidden" name="plant_delete" value="{{plant_delete}}">
+            <button class="btn btn-danger btn-lg my-3" type="submit"> Tak, usuń roślinę &raquo;</button>
+            {% else %}
+            <button class="btn btn-warning btn-lg my-3" type="submit"> Usuń roślinę &raquo;</button>
+            {% endif %}
+        </form>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,11 +1,8 @@
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
 
-@login_required
 def index(request):
     return render(request, 'index.html')
 
@@ -44,7 +41,7 @@ def signup_view(request):
     if request.method == "GET":
         return render(request, 'registration/sign_up.html')
     if request.method == "POST":
-        username = request.POST.get('username')
+        username = request.POST.get('login')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
         email = request.POST.get('email')

@@ -1,17 +1,29 @@
+from math import ceil
+
+from django.db.models import F
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
-from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar
+from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar, PlantBodyType, PlntLibraries, \
+    PlantDescriptions
 
 
 class BotanicalView(View):
+    def get(self, request):
+        plant_num = PlntLibraries.objects.count()
+        return render(request, 'botanical_main.html', {'plant_num': plant_num})
+
+
+class BotanicalAddClear(View):
     def get(self, request):
         if request.session.get('genus_name'):
             del request.session['genus_name']
         if request.session.get('species_name'):
             del request.session['species_name']
-        return render(request, 'botanical_main.html')
+        if request.session.get('cultivar_name'):
+            del request.session['cultivar_name']
+        return redirect('botanical')
 
 
 class BotanicalAddView(View):
@@ -50,25 +62,8 @@ class BotanicalAddView(View):
     def post(self, request):
         error = []
         plant_name = request.POST.get('plant_name')
-        if plant_name:
-            genus = BotSystGenus.objects.get(lac_name=request.session.get('genus_name'))
-            species = BotSystSpecies.objects.get(genus=genus, lac_name=request.session.get('species_name'))
-            cultivar = request.session.get('cultivar_name')
-            if genus:
-                if species:
-                    if cultivar:
-                        cultivar = BotSystCultivar.objects.create(species=species, cultivar=cultivar)
-                        del request.session['cultivar_name']
-                        del request.session['genus_name']
-                        del request.session['species_name']
-                        return HttpResponse(f"Utworzono roślinę: {genus.lac_name} {species.lac_name} {cultivar.cultivar}")
-                    else:
-                        del request.session['genus_name']
-                        del request.session['species_name']
-                        return HttpResponse(f"Utworzono roślinę: {genus.lac_name} {species.lac_name}")
-                else:
-                    del request.session['genus_name']
-                    return HttpResponse(f"Utworzono roślinę: {genus.lac_name}")
+        if plant_name and request.session.get('genus_name'):
+            return redirect('botanical-type-add')
 
         if not request.session.get('genus_name'):
             genus_name = request.POST.get('genus_name')
@@ -129,11 +124,322 @@ class BotanicalAddView(View):
                     request.session['cultivar_name'] = cultivar_name
                 else:
                     error.append('Roślina o tej odmianie już istnieje!')
-            cultivar = BotSystCultivar.objects.filter(species=species)
             return render(request, 'botanical_sel_cultivar.html', {'genus': genus,
                                                                    'species': species,
                                                                    'cultivar': cultivar_name,
-                                                                   'error':error})
+                                                                   'error': error})
+
+
+class BotanicalTypeAddView(View):
+    def get(self, request):
+        plant_name = request.session.get('genus_name')
+        if not plant_name:
+            return redirect('botanical')
+
+        body_types = PlantBodyType.objects.all()
+
+        plant_name += f" {request.session.get('species_name')}"
+        if request.session.get('cultivar_name'):
+            plant_name += f" {request.session.get('cultivar_name')}"
+        return render(request, 'botanical_sel_type.html', {'body_types': body_types,
+                                                           'plant_name': plant_name})
+
+    def post(self, request):
+        body_type = request.POST.get('body_type')
+        edible = request.POST.get('edible')
+
+        error = []
+        if body_type:
+            try:
+                body = PlantBodyType.objects.get(body_type=body_type)
+            except PlantBodyType.DoesNotExist:
+                error.append('Wybierz nazwę typu.')
+                body = None
+
+        if edible:
+            if edible == "Tak":
+                edible = True
+            else:
+                edible = False
+
+            if body:
+                valid = False
+                if request.session.get('genus_name'):
+                    try:
+                        genus = BotSystGenus.objects.get(lac_name=request.session['genus_name'])
+                        valid = True
+                    except BotSystGenus.DoesNotExist:
+                        valid = False
+                        error.append("Błędna nazwa rodzaju")
+
+                if request.session.get('species_name') and valid:
+                    try:
+                        species = BotSystSpecies.objects.get(genus=genus, lac_name=request.session['species_name'])
+                    except BotSystSpecies.DoesNotExist:
+                        valid = False
+                        species = None
+                        error.append("Błędna nazwa gatunku")
+                elif valid:
+                    species = None
+
+                if request.session.get('cultivar_name') and species:
+                    if BotSystCultivar.objects.filter(species=species,
+                                                      cultivar=request.session['cultivar_name']).count():
+                        error.append('Roślina o podanej odmianie zoostała już dodana')
+                        valid = False
+                    else:
+                        cultivar = BotSystCultivar.objects.create(species=species,
+                                                                  cultivar=request.session['cultivar_name'])
+                else:
+                    cultivar = None
+
+                if valid:
+                    if request.session.get('genus_name'):
+                        del request.session['genus_name']
+                    if request.session.get('species_name'):
+                        del request.session['species_name']
+                    if request.session.get('cultivar_name'):
+                        del request.session['cultivar_name']
+                    plant = PlntLibraries.objects.create(genus=genus,
+                                                         species=species,
+                                                         cultivar=cultivar,
+                                                         body_type=body,
+                                                         edible=edible)
+                    return redirect(f'/botanical/show/{plant.id}/')
+
+        else:
+            edible = None
+            error.append('nie wybrano przydatność do jedzenia.')
+
+        body_types = PlantBodyType.objects.all()
+        plant_name = request.POST.get('plant_name')
+        return render(request, 'botanical_sel_type.html', {'body_type': body_type,
+                                                           'body_types': body_types,
+                                                           'plant_name': plant_name,
+                                                           'edible': edible,
+                                                           'error': error})
+
+
+class BotanicalPlantShowView(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        return render(request, 'botanical_show.html', {'plant': plant})
+
+
+class BotanicalPlantEditView(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        return render(request, 'botanical_edit.html', {'plant': plant})
+
+
+class PlantEditDescriptions(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+        descriptions = {}
+        if plant:
+            if plant.description:
+                descriptions = {'botanical': plant.description.botanical,
+                                'cultivation': plant.description.cultivation,
+                                'destiny': plant.description.destiny}
+
+        return render(request, 'botanical_edit_description.html', {'plant': plant,
+                                                                   'descriptions': descriptions})
+
+    def post(self, request, plant_id):
+        error = []
+        descriptions = {}
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+            error.append('Nie znaleziono rośliny.')
+
+        if plant:
+            if plant.description:
+                description = PlantDescriptions.objects.get(id=plant.description.id)
+            else:
+                description = PlantDescriptions()
+            if request.POST.get('destiny'):
+                descriptions['destiny'] = request.POST.get('destiny')
+                description.destiny = request.POST.get('destiny')
+            else:
+                error.append("Nie wypełniono opisu zastosowania.")
+
+            if request.POST.get('cultivation'):
+                descriptions['cultivation'] = request.POST.get('cultivation')
+                description.cultivation = request.POST.get('cultivation')
+            else:
+                error.append("Nie wypełniono opisu uprawy.")
+
+            if request.POST.get('botanical'):
+                descriptions['botanical'] = request.POST.get('botanical')
+                description.botanical = request.POST.get('botanical')
+                descriptions['agree'] = 'agree1'
+            else:
+                error.append("Nie wypełniono opisu botanicznego. Jest wymagany!")
+
+            if len(error) == 0 or 'agree1' == request.POST.get('agree'):
+                description.save()
+                if not plant.description:
+                    plant.description = description
+                    plant.save()
+                return redirect('/botanical/list/1/')
+
+        return render(request, 'botanical_edit_description.html', {'plant': plant,
+                                                                   'descriptions': descriptions,
+                                                                   'error': error})
+
+
+class PlantEditBody(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        edible = ''
+        if plant:
+            body_type = plant.body_type.body_type
+            if plant.edible:
+                edible = 'checked'
+
+        body_types = PlantBodyType.objects.order_by('lp').all()
+        return render(request, 'botanical_edit_body.html', {'plant': plant,
+                                                            'body_types': body_types,
+                                                            'body_type': body_type,
+                                                            'edible': edible})
+
+    def post(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        error = []
+        if plant:
+            change = 0
+            body_type = request.POST.get('body_type')
+            if request.POST.get('body_type'):
+                if plant.body_type.body_type != request.POST.get('body_type'):
+                    try:
+                        plant.body_type = PlantBodyType.objects.get(body_type=request.POST.get('body_type'))
+                        change += 1
+                    except PlantBodyType.DoesNotExist:
+                        error.append('Brak typu rośliny.')
+            edible = request.POST.get('edible')
+            if edible:
+                if not plant.edible:
+                    plant.edible = True
+                    change += 1
+            else:
+                if plant.edible:
+                    plant.edible = False
+                    change += 1
+            if change:
+                plant.save()
+                return redirect('/botanical/list/1/')
+            else:
+                error.append('Nie wprowadzono zmian.')
+
+        body_types = PlantBodyType.objects.order_by('lp').all()
+        return render(request, 'botanical_edit_body.html', {'plant': plant,
+                                                            'body_types': body_types,
+                                                            'body_type': body_type,
+                                                            'edible': edible,
+                                                            'error': error})
+
+
+class BotanicalPlantDeleteView(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        return render(request, 'botanical_delete.html', {'plant': plant})
+
+    def post(self, request, plant_id):
+        if request.POST.get('plant_delete'):
+            plant = PlntLibraries.objects.get(id=plant_id)
+            if plant.cultivar:
+                cultivar = BotSystCultivar.objects.get(id=plant.cultivar.id)
+                cultivar.delete()
+
+            plant.delete()
+            return redirect('botanical')
+
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+        return render(request, 'botanical_delete.html', {'plant': plant,
+                                                         'plant_delete': 'tak'})
+
+
+class BotanicalListView(View):
+    def get(self, request, page):
+
+        # plants1 = PlntLibraries.objects.filter(cultivar__isnull=True).order_by('genus__lac_name',
+        #                                                                        'species__lac_name')
+        # plants = plants1.union(plants2)
+        plants_num = PlntLibraries.objects.order_by('genus__lac_name',
+                                                    F('species__lac_name').desc(nulls_last=False),
+                                                    F('cultivar__cultivar').desc(nulls_last=False)).count()
+        if not page:
+            page = 1
+        paginator = {}
+        plants_on_page = 5
+        if plants_num == 0:
+            plants_num = 1
+        paginator['page_num'] = ceil(plants_num / plants_on_page)
+        if (paginator['page_num'] > 0) and (page > paginator['page_num']):
+            page = paginator['page_num']
+        paginator['page'] = page
+        if paginator['page_num'] > 1:
+            paginator['page_prev'] = page - 1
+            paginator['page_next'] = page + 1
+            paginator['page_nav'] = []
+            for st in range(1, paginator['page_num'] + 1):
+                paginator['page_nav'].append(st)
+
+        plants = PlntLibraries.objects.order_by('genus__lac_name',
+                                                F('species__lac_name').desc(nulls_last=False),
+                                                F('cultivar__cultivar').desc(nulls_last=False))[
+                 (page - 1) * plants_on_page:page * plants_on_page]
+
+        return render(request, 'botanical_list.html', {'plants': plants, 'paginator': paginator})
+
+
+class BotanicalAddTypeView(View):
+    def get(self, request):
+        return render(request, 'botanical_add_body_type.html')
+
+    def post(self, request):
+        body_type = request.POST.get('body_type')
+        error = []
+        if len(body_type) > 4:
+            if PlantBodyType.objects.filter(body_type=body_type).count():
+                error.append('Typ już istnieje')
+            else:
+                lp = PlantBodyType.objects.all().count()
+                lp += 1
+                PlantBodyType.objects.create(body_type=body_type, lp=lp)
+                return redirect('botanical-type-add')
+        else:
+            error.append("Nie wypełniono typu lub jest krótszy niż 5 liter.")
+            return render(request, 'botanical_add_body_type.html', {'body_type': body_type,
+                                                                    'error': error})
 
 
 class BotanicalAddGenusView(View):

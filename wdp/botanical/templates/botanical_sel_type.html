@@ -1,0 +1,87 @@
+{% extends "botanical_base.html" %}
+{% block page_title %}<h1 class="display-5">Typ Rośliny</h1>{%  endblock %}
+{% block page_description %}
+<ul>
+    <li>Wybierz nazwę typu w poniższym formularzu.</li>
+    <li>Jeśli nie znalazłeś, możesz ją dodać tutaj.</li>
+    <li style="list-style-type: none;">
+        <a class="btn btn-success btn-sm" style="margin-top: 7px;" href="{% url 'botanical-add-type' %}" role="button">Dodaj
+            nazwę &raquo;</a>
+    </li>
+</ul>
+
+
+{%  endblock %}
+{% block page_content %}
+<form method="POST">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-5">
+        <h3>Typ rośliny</h3>
+        <div class="input-group mb-4">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect01">Nazwa typu</label>
+            </div>
+            <select class="custom-select" id="inputGroupSelect01" name="body_type">
+                {% for body in body_types %}
+                {% if forloop.first %}
+                {% if body_type == None %}
+                <option>Wybierz</option>
+                {% endif %}
+                {% endif %}
+                {% if body.body_type == body_type %}
+                <option value="{{body.body_type}}" selected>{{body.body_type}}</option>
+                {% else %}
+                <option value="{{body.body_type}}">{{body.body_type}}</option>
+                {% endif %}
+                {% empty %}
+                <option selected>Brak typów...</option>
+                {% endfor %}
+            </select>
+        </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+        <div class="input-group mb-4">
+
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="inputGroupSelect02">Przydatność do jedzenia</label>
+            </div>
+            <select class="custom-select" id="inputGroupSelect02" name="edible">
+                {% if edible == "Tak" %}
+                <option value="Nie">Nie</option>
+                <option value="Tak" selected>Tak</option>
+                {% else %}
+                <option value="Nie" selected>Nie</option>
+                <option value="Tak">Tak</option>
+                {% endif %}
+            </select>
+            <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Zapisz</button>
+        </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="input-group mb-4">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect03">Nazwa rośliny</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect03" name="plant_name" value="plant_name">
+                    <option>{{plant_name}}</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    {% if error %}
+    <div class="row">
+        <div class="col-md-4">
+            <h5 style="margin-top: 10px; color: #772222;">Błąd</h5>
+            {% for er in error %}
+            <p style="color: #772222;">{{ er }}</p>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</form>
+{%  endblock %}

@@ -1,0 +1,44 @@
+{% extends "botanical_base.html" %}
+{% block title %}Katalog roślin{% endblock %}
+{% block page_title %}<h1 class="display-4">Edycja rośliny</h1>{% endblock %}
+
+{% block page_description %}
+{% endblock %}
+
+{% block page_content %}
+<div class="row">
+    <div class="col-md-9">
+        <h2>Systematyka</h2>
+        <ul>
+            <li>Rodzaj: <strong>{{plant.genus}} ({{plant.genus.pl_name}})</strong></li>
+            {% if plant.species != None %}<li>Gatunek: <strong>{{plant.species}} ({{plant.species.pl_name}})</strong></li>{% endif %}
+            {% if plant.cultivar != None %}<li>Odmiana: <strong>'{{plant.cultivar}}'</strong></li>{% endif %}
+        </ul>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <h2>Opis</h2>
+        <ul>
+            <li><strong>Botaniczny:</strong> {{plant.description.botanical}}</li>
+            <li><strong>Uprawa:</strong> {{plant.description.cultivation}}</li>
+            <li><strong>Przeznaczenie:</strong> {{plant.description.destiny}}</li>
+            <li style="list-style-type: none"><p><a class="btn btn-outline-success btn-sm mt-2"
+                                                    href="{% url 'botanical-edit-descriptions' plant.id %}"
+                                                    role="button"> Edytuj &raquo;</a></li>
+        </ul>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9">
+        <h2>Pokrój</h2>
+        <ul>
+            <li>Pokrój: <strong>{{plant.body_type}}</strong></li>
+            <li>Przydatność do jedzenia: <strong>{{plant.edible_show}}</strong></li>
+            <li style="list-style-type: none"><p><a class="btn btn-outline-success btn-sm mt-2"
+                                                    href="{% url 'botanical-edit-body' plant.id %}" role="button">
+                Edytuj &raquo;</a></li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
