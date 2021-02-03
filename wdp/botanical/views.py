@@ -300,6 +300,28 @@ class PlantEditDescriptions(View):
                                                                    'error': error})
 
 
+class PlantEditBody(View):
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        edible = ''
+        if plant:
+            body_type = plant.body_type
+            if plant.edible:
+                edible = 'checked'
+
+        body_types = PlantBodyType.objects.order_by('lp').all()
+        return render(request, 'botanical_edit_body.html', {'plant': plant,
+                                                            'body_types': body_types,
+                                                            'body_type': body_type,
+                                                            'edibe': edible})
+
+    
+
+
 class BotanicalPlantDeleteView(View):
     def get(self, request, plant_id):
         try:
