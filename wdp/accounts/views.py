@@ -9,7 +9,10 @@ def index(request):
 
 def login_view(request):
     if request.method == "GET":
-        return render(request, 'registration/login.html')
+        if request.GET.get('next'):
+            return render(request, 'registration/login.html', {'next': request.GET.get('next')})
+        else:
+            return render(request, 'registration/login.html')
 
     if request.method == "POST":
         error = []
@@ -19,9 +22,13 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('/botanical/')
+                if request.POST.get('next'):
+                    goto = request.POST.get('next')
+                else:
+                    goto = '/botanical/'
+                return redirect(goto)
             else:
-                error.append("Nie znaleziono urzytkownika")
+                error.append("Nie znaleziono użytkownika")
                 return render(request, 'registration/login.html', {'username': username,
                                                                    'password': password,
                                                                    'error': error})
