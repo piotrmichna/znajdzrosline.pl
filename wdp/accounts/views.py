@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 
@@ -39,12 +39,16 @@ def logout_view(request):
 
 def signup_view(request):
     if request.method == "GET":
-        return render(request, 'registration/sign_up.html')
+        user_groups = Group.objects.all()
+        return render(request, 'registration/sign_up.html', {'user_groups': user_groups,
+                                                             'user_group': ''})
     if request.method == "POST":
         username = request.POST.get('login')
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
+        user_group = request.POST.get('user_group')
         email = request.POST.get('email')
+        user_groups = Group.objects.all()
         error = []
         if not email:
             error.append('Adres e-mail jest wymagany.')
@@ -67,11 +71,23 @@ def signup_view(request):
             if password2 != password1:
                 error.append('Podane hasła są niezgodne.')
 
+        if user_group:
+            try:
+                group = Group.objects.get(name=user_group)
+            except Group.DoesNotExist:
+                error.append(f'Grupy użytkowników nie istnieje. {user_group}')
+                user_group = None
+        else:
+            error.append(f'Nie wybrano grupy użytkowników. {user_group}')
+
         if len(error) == 0:
             user = User.objects.create_user(username, email, password1)
+            group.user_set.add(user)
             login(request, user)
             return redirect('/botanical/')
         else:
             return render(request, 'registration/sign_up.html', {'username': username,
                                                                  'email': email,
+                                                                 'user_groups': user_groups,
+                                                                 'user_group': user_group,
                                                                  'error': error})
