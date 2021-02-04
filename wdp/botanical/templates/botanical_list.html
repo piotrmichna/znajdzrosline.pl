@@ -15,7 +15,9 @@
             <th scope="col">Nazwa polska</th>
             <th scope="col">Typ</th>
             <th scope="col">Jadalna</th>
+            {% if request.user.is_authenticated %}
             <th scope="col">Działania</th>
+            {% endif %}
         </tr>
         </thead>
         <tbody>
@@ -30,16 +32,22 @@
                 {% if plant.cultivar %} {{plant.cultivar}} {% endif %}</td>
             <td>{{ plant.body_type }}</td>
             <td>{{ plant.edible_show }}</td>
+            {% if request.user.is_authenticated %}
             <td>
                 <a href="{% url 'botanical-show' plant.id %}" type="button" class="btn btn-outline-secondary btn-sm">Wyświetl</a>
                 <a href="{% url 'botanical-edit' plant.id %}" type="button" class="btn btn-outline-success btn-sm">Edytuj</a>
                 <a href="{% url 'botanical-delete' plant.id %}" type="button" class="btn btn-outline-danger btn-sm">Usuń</a>
             </td>
+            {% endif %}
         </tr>
         {% empty %}
         <tr>
             <th scope="row">#</th>
+            {% if request.user.is_authenticated %}
             <td colspan="5" style="align: center">Brak wyników</td>
+            {% else %}
+            <td colspan="4" style="align: center">Brak wyników</td>
+            {% endif %}
         </tr>
         {% endfor %}
         </tbody>
