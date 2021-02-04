@@ -35,9 +35,19 @@
                 </div>
             </li>
             {% else %}
-            <li class="nav-item active">
-                <a class="nav-link" href="/botanical/"> Rośliny <span class="sr-only">(current)</span></a>
+            <!--                <a class="nav-link" href="/botanical/"> Rośliny <span class="sr-only">(current)</span></a>-->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="" id="dropdown00" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false"> Rośliny <span class="sr-only"></span></a>
+
+                <div class="dropdown-menu" aria-labelledby="dropdown00">
+                    {% if request.session.genus_name %}
+                    <a class="dropdown-item" href="{% url 'botanical-add-clear' %}">Wyczyść dodawanie</a>
+                    {% endif %}
+                    <a class="dropdown-item" href="{% url 'botanical-list' 1 %}">Lista roślin</a>
+                </div>
             </li>
+
             {% endif %}
             <li class="nav-item">
                 <a class="nav-link" href="#">Szkułki</a>
