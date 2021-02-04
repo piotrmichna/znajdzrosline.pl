@@ -26,7 +26,8 @@
         </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Adres e-mail</label>
-            <input type="email" class="form-control col-5 mx-auto" id="exampleInputEmail1" placeholder="poczta@domena.pl"
+            <input type="email" class="form-control col-5 mx-auto" id="exampleInputEmail1"
+                   placeholder="poczta@domena.pl"
                    name="email" value="{{email}}">
         </div>
         <div class="form-group">
@@ -40,18 +41,38 @@
                    placeholder="Ponownie hasło"
                    name="password2">
         </div>
+        <div class="form-group">
+            <label for="inputGroupSelect01">Grupa użytkowników</label>
+            <select class="form-control form-control col-5 mx-auto" id="inputGroupSelect01" name="user_group">
+                {% for group in user_groups %}
+                {% if forloop.first %}
+                <option value="">Wybierz</option>
+
+                {% endif %}
+                {% if group == user_group %}
+                <option value="{{group}}" selected>{{group}}</option>
+                {% else %}
+                <option value="{{group}}">{{group}}</option>
+                {% endif %}
+                {% empty %}
+                <option selected>Brak nazw...</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
         <strong style="margin-top: 20px;margin-bottom: 20px">
             {% for err in error %}
             {% if forloop.first %}
             <ul>
-            {% endif %}
+                {% endif %}
                 <li>{{err}}</li>
-            {% if forloop.last %}
+                {% if forloop.last %}
             </ul>
             {% endif %}
             {% endfor %}
         </strong>
-        <button type="submit" class="btn btn-lg btn-success">Zarejestruj</button>
+        </div>
+        <button type="submit" class="btn btn-lg btn-success mt-3">Zarejestruj</button>
     </form>
 
 </main>

@@ -1,7 +1,8 @@
 from math import ceil
 
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.db.models import F
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -15,7 +16,7 @@ class BotanicalView(View):
         return render(request, 'botanical_main.html', {'plant_num': plant_num})
 
 
-class BotanicalAddClear(View):
+class BotanicalAddClear(LoginRequiredMixin, View):
     def get(self, request):
         if request.session.get('genus_name'):
             del request.session['genus_name']
@@ -26,7 +27,9 @@ class BotanicalAddClear(View):
         return redirect('botanical')
 
 
-class BotanicalAddView(View):
+class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request):
         genus_name = request.session.get('genus_name')
         species_name = request.session.get('species_name')
@@ -130,7 +133,9 @@ class BotanicalAddView(View):
                                                                    'error': error})
 
 
-class BotanicalTypeAddView(View):
+class BotanicalTypeAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request):
         plant_name = request.session.get('genus_name')
         if not plant_name:
@@ -230,7 +235,9 @@ class BotanicalPlantShowView(View):
         return render(request, 'botanical_show.html', {'plant': plant})
 
 
-class BotanicalPlantEditView(View):
+class BotanicalPlantEditView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request, plant_id):
         try:
             plant = PlntLibraries.objects.get(id=plant_id)
@@ -240,7 +247,9 @@ class BotanicalPlantEditView(View):
         return render(request, 'botanical_edit.html', {'plant': plant})
 
 
-class PlantEditDescriptions(View):
+class PlantEditDescriptions(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request, plant_id):
         try:
             plant = PlntLibraries.objects.get(id=plant_id)
@@ -301,7 +310,9 @@ class PlantEditDescriptions(View):
                                                                    'error': error})
 
 
-class PlantEditBody(View):
+class PlantEditBody(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request, plant_id):
         try:
             plant = PlntLibraries.objects.get(id=plant_id)
@@ -360,7 +371,9 @@ class PlantEditBody(View):
                                                             'error': error})
 
 
-class BotanicalPlantDeleteView(View):
+class BotanicalPlantDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request, plant_id):
         try:
             plant = PlntLibraries.objects.get(id=plant_id)
@@ -421,7 +434,9 @@ class BotanicalListView(View):
         return render(request, 'botanical_list.html', {'plants': plants, 'paginator': paginator})
 
 
-class BotanicalAddTypeView(View):
+class BotanicalAddTypeView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request):
         return render(request, 'botanical_add_body_type.html')
 
@@ -442,7 +457,9 @@ class BotanicalAddTypeView(View):
                                                                     'error': error})
 
 
-class BotanicalAddGenusView(View):
+class BotanicalAddGenusView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request):
         return render(request, 'botanical_add_genus.html')
 
@@ -477,7 +494,9 @@ class BotanicalAddGenusView(View):
                                                             'genus_pl': genus_pl})
 
 
-class BotanicalAddSpeciesView(View):
+class BotanicalAddSpeciesView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+
     def get(self, request):
         genus_name = request.session.get('genus_name')
 
