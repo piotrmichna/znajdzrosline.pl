@@ -29,7 +29,9 @@
             <input type="password" class="form-control col-5 mx-auto" id="exampleInputPassword1" placeholder="Hasło"
                    name="password" value="{{password}}">
         </div>
-
+        {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
         <button type="submit" class="btn btn-lg btn-success">Zaloguj</button>
     </form>
     <small id="formHelp" class="form-text text-muted" style="margin-top: 20px">
