@@ -1,7 +1,5 @@
 from math import ceil
-
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.core.exceptions import PermissionDenied
 from django.db.models import F
 from django.shortcuts import render, redirect
 from django.views import View
@@ -11,30 +9,58 @@ from botanical.models import BotSystGenus, BotSystSpecies, BotSystCultivar, Plan
 
 
 class BotanicalView(View):
+    """WIDOK GŁÓWNY KATALOGU ROŚLIN"""
+
     def get(self, request):
         plant_num = PlntLibraries.objects.count()
         return render(request, 'botanical_main.html', {'plant_num': plant_num})
 
 
-class BotanicalAddClear(LoginRequiredMixin, View):
-    def get(self, request):
-        if request.session.get('genus_name'):
-            del request.session['genus_name']
-        if request.session.get('species_name'):
-            del request.session['species_name']
-        if request.session.get('cultivar_name'):
-            del request.session['cultivar_name']
-        return redirect('botanical')
+class BotanicalPlantShowView(View):
+    """WIDOK WYŚWIETLA SZCZEGÓŁOWE INFORMACJE O ROŚLINIE"""
+
+    def get(self, request, plant_id):
+        try:
+            plant = PlntLibraries.objects.get(id=plant_id)
+        except PlntLibraries.DoesNotExist:
+            plant = None
+
+        return render(request, 'botanical_show.html', {'plant': plant})
 
 
-class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
+class BotanicalSystAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """
+    WIDOK DODAWANIA NAZW ROŚLIN
+
+    klasa udostępnia kolejne szablony wyboru członów nazwy i zapisuje wybrane w
+    zmiennych sesyjnych (genus, species, cultivar)
+
+    Nazwa rośliny = genus (wymagany)
+                        `- species
+                                `- cultivar
+    Metody
+    ------
+    get - Wyświetla odpowiedni szablon adekwatny dla nie wybranego poziomu nazwy,
+        na podstawie zmiennych sesyjnych przechowujących wybranych już nazw.
+        - Szablony dla poziomów nazw (genus i species) zawierają posiadają pole
+        typu <select> wyboru nazwy oraz odnośnik do odrębnego szablonu dodawania nowych.
+        - Nazwa cultivar jest nazwą indywidualną rośliny więc szablo dla tego poziomu
+        zawiera pole typu <input>
+
+    post - Obsługuje formularze szablonów kolejno dla poziomów nazw, przy pozytywnej
+        walidacji ustawia zmienną sesyjną dla danego poziomu i wyświetla szablon
+        kolejnego poziomu.
+        - szablony species i cultivar zawierają dwa formularze ( wybór nazwy dla poziomu,
+        zapis pełnej nazwy), wysłanie formularza pełnej nazwy kończy działanie widoku i
+        przekierowuje na adres widoku definiowania cech rośliny.
+    """
     permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
 
     def get(self, request):
         genus_name = request.session.get('genus_name')
         species_name = request.session.get('species_name')
 
-        if genus_name:
+        if genus_name:  # ETAP WYBORU RODZAJU
             try:
                 gen = BotSystGenus.objects.get(lac_name=genus_name)
             except BotSystGenus.DoesNotExist:
@@ -43,7 +69,7 @@ class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 genus = BotSystGenus.objects.all()
                 return render(request, 'botanical_sel_genus.html', {'genus': genus})
 
-            if species_name:
+            if species_name:  # ETAP WYBORU ODMIANY
                 try:
                     species = BotSystSpecies.objects.get(genus=gen, lac_name=species_name)
                 except BotSystSpecies.DoesNotExist:
@@ -54,7 +80,7 @@ class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
                 return render(request, 'botanical_sel_cultivar.html', {'genus': gen,
                                                                        'spec': species})
-            else:
+            else:  # ETAP WYBORU GATUNKU
                 species = BotSystSpecies.objects.filter(genus=gen)
                 return render(request, 'botanical_sel_species.html', {'genus': gen,
                                                                       'species': species})
@@ -65,10 +91,10 @@ class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
     def post(self, request):
         error = []
         plant_name = request.POST.get('plant_name')
-        if plant_name and request.session.get('genus_name'):
+        if plant_name and request.session.get('genus_name'):  # KONIEC DEFINIOWANIA PEŁNEJ NAZWY
             return redirect('botanical-type-add')
 
-        if not request.session.get('genus_name'):
+        if not request.session.get('genus_name'):  # WYBÓR NAZWY RODZAJU
             genus_name = request.POST.get('genus_name')
             if genus_name and genus_name != 'Wybierz':
                 try:
@@ -79,7 +105,8 @@ class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
                     return render(request, 'botanical_sel_genus.html', {'genus': genus,
                                                                         'genus_name': genus_name,
                                                                         'error': error})
-                request.session['genus_name'] = genus_name
+
+                request.session['genus_name'] = genus_name  # KONIEC WYBÓR NAZWY RODZAJU
                 species = BotSystSpecies.objects.filter(genus=genus)
                 return render(request, 'botanical_sel_species.html', {'genus': genus,
                                                                       'species': species})
@@ -88,7 +115,7 @@ class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 genus = BotSystGenus.objects.all()
                 return render(request, 'botanical_sel_genus.html', {'genus': genus,
                                                                     'error': error})
-        elif not request.session.get('species_name'):
+        elif not request.session.get('species_name'):  # WYBÓR NAZWY GATUNKU
 
             genus_name = request.session.get('genus_name')
             try:
@@ -109,7 +136,7 @@ class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
                     return render(request, 'botanical_sel_species.html', {'genus': genus,
                                                                           'species': species,
                                                                           'error': error})
-                request.session['species_name'] = species_name
+                request.session['species_name'] = species_name  # KONIEC WYBÓR NAZWY GATUNKU
                 cultivar = BotSystCultivar.objects.filter(species=species)
                 return render(request, 'botanical_sel_cultivar.html', {'genus': genus,
                                                                        'species': species,
@@ -118,13 +145,13 @@ class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 species = BotSystSpecies.objects.filter(genus=genus).all()
                 return render(request, 'botanical_sel_species.html', {'genus': genus,
                                                                       'species': species})
-        else:
+        else:  # WYBÓR NAZWY ODMIANY
             genus = BotSystGenus.objects.get(lac_name=request.session.get('genus_name'))
             species = BotSystSpecies.objects.get(genus=genus, lac_name=request.session.get('species_name'))
             cultivar_name = request.POST.get('cultivar_name')
             if cultivar_name:
                 if not BotSystCultivar.objects.filter(species=species, cultivar=cultivar_name).count():
-                    request.session['cultivar_name'] = cultivar_name
+                    request.session['cultivar_name'] = cultivar_name  # KONIEC WYBÓR NAZWY GATUNKU
                 else:
                     error.append('Roślina o tej odmianie już istnieje!')
             return render(request, 'botanical_sel_cultivar.html', {'genus': genus,
@@ -134,6 +161,14 @@ class BotanicalAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 
 class BotanicalTypeAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """
+    WIDOK DODAWANIA CECH ROŚLINY
+
+    Widok udostępnia szablon wyboru typu pokroju oraz przydatności do spożycia rośliny.
+    Po poprawnej walidacji wartości formularza łącznie z nazwą rośliny zapisaną w sesji
+    następuje stworzenie obiektu PlntLibraries oraz usunięcie zmiennych sesyjnych nazwy.
+    """
+
     permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
 
     def get(self, request):
@@ -225,17 +260,21 @@ class BotanicalTypeAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
                                                            'error': error})
 
 
-class BotanicalPlantShowView(View):
-    def get(self, request, plant_id):
-        try:
-            plant = PlntLibraries.objects.get(id=plant_id)
-        except PlntLibraries.DoesNotExist:
-            plant = None
+class BotanicalAddClear(LoginRequiredMixin, View):
+    """WIDOK USUWA NAZWY ROŚLINY Z SESJI W PRZYPADKU REZYGNACJI Z DODAWANIA DANEJ ROŚLINY"""
 
-        return render(request, 'botanical_show.html', {'plant': plant})
+    def get(self, request):
+        if request.session.get('genus_name'):
+            del request.session['genus_name']
+        if request.session.get('species_name'):
+            del request.session['species_name']
+        if request.session.get('cultivar_name'):
+            del request.session['cultivar_name']
+        return redirect('botanical')
 
 
 class BotanicalPlantEditView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """WIDOK WYŚWIETLA SZCZEGÓŁY ROŚLINY + ZAWIERA ODNOŚNIKI DO EDYCJI OPISÓW I CECH ROŚLINY"""
     permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
 
     def get(self, request, plant_id):
@@ -248,6 +287,21 @@ class BotanicalPlantEditView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 
 class PlantEditDescriptions(LoginRequiredMixin, PermissionRequiredMixin, View):
+    """
+    WIDOK EDYCJI OPISÓW ROŚLINY
+
+    Klasa umożliwia edycję opisów: botaniczny, uprawa, zastosowanie.
+    Opis botaniczny jest wymagany.
+
+    metody
+    ------
+    get - wyświetla szablon z formularzem dla wszystkich opisów wypełnionych aktualnym stanem.
+
+    post - Sprawdza zawartość odebranych pól z formularza (raz wypełniony opis można modyfikować
+            z wyjątkiem pustego)
+         - W przypadku braku opisów dla uprawy i zastosowania metoda wymaga dodatkowego potwierdzenia
+         - Zapisuje wprowadzone zmiany.
+    """
     permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
 
     def get(self, request, plant_id):
