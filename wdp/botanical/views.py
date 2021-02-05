@@ -592,8 +592,8 @@ class BotanicalListView(View):
         #                                                                        'species__lac_name')
         # plants = plants1.union(plants2)
         plants_num = PlntLibraries.objects.order_by('genus__lac_name',
-                                                    F('species__lac_name').desc(nulls_last=False),
-                                                    F('cultivar__cultivar').desc(nulls_last=False)).count()
+                                                    F('species__lac_name').asc(nulls_last=False),
+                                                    F('cultivar__cultivar').asc(nulls_last=False)).count()
         if not page:
             page = 1
         paginator = {}
