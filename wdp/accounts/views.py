@@ -3,11 +3,9 @@ from django.contrib.auth import login, logout, authenticate
 from django.shortcuts import render, redirect
 
 
-def index(request):
-    return render(request, 'index.html')
-
-
 def login_view(request):
+    """WIDOK LOGOWANIA"""
+
     if request.method == "GET":
         if request.GET.get('next'):
             return render(request, 'registration/login.html', {'next': request.GET.get('next')})
@@ -40,11 +38,20 @@ def login_view(request):
 
 
 def logout_view(request):
+    """WIDOK WYLOGOWANIA"""
     logout(request)
     return redirect('/')
 
 
 def signup_view(request):
+    """
+    WIDOK REJESTRACJI
+    Obsługa formularza rejestracji.
+        - walidacja danych
+        - utworzenie z zapisem nowego użytkownika
+        - przydzielenie użytkownika do wybranej grupy uprawnień
+        - przekierowanie użytkownika do głównej strony katalogu roślin (/botanical/)
+    """
     if request.method == "GET":
         user_groups = Group.objects.all()
         return render(request, 'registration/sign_up.html', {'user_groups': user_groups,
