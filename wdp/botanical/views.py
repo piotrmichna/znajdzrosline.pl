@@ -166,7 +166,7 @@ class BotanicalAddGenusView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
         Definiowanie nowych nazw rodzaju, zapewnienie unikalności nazw.
         """
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request):
         return render(request, 'botanical_add_genus.html')
@@ -208,7 +208,7 @@ class BotanicalAddSpeciesView(LoginRequiredMixin, PermissionRequiredMixin, View)
 
     Dodawanie nowych unikalnych nazw gatunku należących do zbioru danego rodzaju.
     """
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request):
         genus_name = request.session.get('genus_name')
@@ -251,7 +251,7 @@ class BotanicalTypeAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
     następuje stworzenie obiektu PlntLibraries oraz usunięcie zmiennych sesyjnych nazwy.
     """
 
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request):
         plant_name = request.session.get('genus_name')
@@ -349,7 +349,7 @@ class BotanicalAddTypeView(LoginRequiredMixin, PermissionRequiredMixin, View):
     Wyświetla formularz dodawania nowych typów rośliny.
     Umiemożliwa wystąpienia powtórzeń nazw.
     """
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request):
         return render(request, 'botanical_add_body_type.html')
@@ -387,7 +387,7 @@ class BotanicalAddClear(LoginRequiredMixin, View):
 class BotanicalPlantEditView(LoginRequiredMixin, PermissionRequiredMixin, View):
     """WIDOK WYŚWIETLA SZCZEGÓŁY ROŚLINY + ZAWIERA ODNOŚNIKI DO EDYCJI OPISÓW I CECH ROŚLINY"""
 
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request, plant_id):
         try:
@@ -414,7 +414,7 @@ class PlantEditDescriptions(LoginRequiredMixin, PermissionRequiredMixin, View):
          - W przypadku braku opisów dla uprawy i zastosowania metoda wymaga dodatkowego potwierdzenia
          - Zapisuje wprowadzone zmiany.
     """
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request, plant_id):
         try:
@@ -479,7 +479,7 @@ class PlantEditDescriptions(LoginRequiredMixin, PermissionRequiredMixin, View):
 class PlantEditBody(LoginRequiredMixin, PermissionRequiredMixin, View):
     """EDYCJA CECH ROŚLINY"""
 
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request, plant_id):
         try:
@@ -548,7 +548,7 @@ class BotanicalPlantDeleteView(LoginRequiredMixin, PermissionRequiredMixin, View
     get -Wyświetla szablon z informacjami o roślinie
     post - Wyświetla szablon z informacjami oraz formularz usunięcia rośliny
     """
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request, plant_id):
         try:
