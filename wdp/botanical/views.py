@@ -166,7 +166,7 @@ class BotanicalAddGenusView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
         Definiowanie nowych nazw rodzaju, zapewnienie unikalności nazw.
         """
-    permission_required = ('botanical.add_botsystgenus')
+    #permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request):
         return render(request, 'botanical_add_genus.html')
@@ -592,8 +592,8 @@ class BotanicalListView(View):
         #                                                                        'species__lac_name')
         # plants = plants1.union(plants2)
         plants_num = PlntLibraries.objects.order_by('genus__lac_name',
-                                                    F('species__lac_name').desc(nulls_last=False),
-                                                    F('cultivar__cultivar').desc(nulls_last=False)).count()
+                                                    F('species__lac_name').asc(nulls_last=False),
+                                                    F('cultivar__cultivar').asc(nulls_last=False)).count()
         if not page:
             page = 1
         paginator = {}
