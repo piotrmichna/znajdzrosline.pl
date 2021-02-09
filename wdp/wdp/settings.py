@@ -122,7 +122,6 @@ LOGIN_URL = '/accounts/login/'
 
 try:
     from wdp.local_settings import DATABASES
-
     print('local_settings')
 except ModuleNotFoundError:
     print("Brak konfiguracji bazy danych w pliku local_settings.py!")

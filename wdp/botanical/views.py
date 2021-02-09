@@ -166,7 +166,7 @@ class BotanicalAddGenusView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
         Definiowanie nowych nazw rodzaju, zapewnienie unikalności nazw.
         """
-    permission_required = ('botanical.add_botsystgenus')
+    #permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request):
         return render(request, 'botanical_add_genus.html')
