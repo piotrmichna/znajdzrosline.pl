@@ -1,18 +1,22 @@
-# Aplikacja do zażądzania specyfikacją materiału roślinnego w dokumentacji projekowej dla terenów zieleni
+# Aplikacja do zarządzania specyfikacją materiału roślinnego w dokumentacji projektowej dla terenów zieleni
 
-## Podstawą aplkiacji będzię baza roślin:
+### Apilkacja umieszczona na edukacyjnym VPS (http://mikr.us) dostępna pod adresem http://www.znajdzrosline.pl
+
+## Podstawą aplikacji będzie baza roślin:
 
 ```
 ROŚLINA (baza główna)
  |
- + Autor (Usunięcie użytkownika nie usuówa roślin) da się?
+ + Autor
  |
  + Systematyka
  |   |
  |   + Rodzaj (nazwa łacińska, nazwa polska, synonimy, mieszaniec)
- |      |
- |      + Gatunek (nazwa łacińska, nazwa polska, synonimy, mieszaniec)
- |         |
- |         + Odmiana (nazwa odmianowa, synonim)
- |
- +
+ |   |   |
+ |   |   + Gatunek (nazwa łacińska, nazwa polska, synonimy, mieszaniec)
+ |   |   |   |
+ |   |   |   + Odmiana (nazwa odmianowa, synonim)
+ |   |   |   |
+ |   +---+---+ Roślina (typ pokroju, jadalność)
+ |               |
+ |               + Opisy (botaniczny, uprawa, zastosowanie)

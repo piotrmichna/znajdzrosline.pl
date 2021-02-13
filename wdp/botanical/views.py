@@ -54,7 +54,7 @@ class BotanicalSystAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
         zapis pełnej nazwy), wysłanie formularza pełnej nazwy kończy działanie widoku i
         przekierowuje na adres widoku definiowania cech rośliny.
     """
-    permission_required = ('botanical.add_botsystgenus', 'botanical.add_botsystspecies')
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request):
         genus_name = request.session.get('genus_name')
@@ -162,11 +162,12 @@ class BotanicalSystAddView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 class BotanicalAddGenusView(LoginRequiredMixin, PermissionRequiredMixin, View):
     """
-        WIDOK DODAWANIA NAZW RODZAJU
+    WIDOK DODAWANIA NAZW RODZAJU
 
-        Definiowanie nowych nazw rodzaju, zapewnienie unikalności nazw.
-        """
-    #permission_required = ('botanical.add_botsystgenus')
+    Definiowanie nowych nazw rodzaju, zapewnienie unikalności nazw.
+    """
+
+    permission_required = ('botanical.add_botsystgenus')
 
     def get(self, request):
         return render(request, 'botanical_add_genus.html')
@@ -224,11 +225,12 @@ class BotanicalAddSpeciesView(LoginRequiredMixin, PermissionRequiredMixin, View)
             genus = BotSystGenus.objects.get(lac_name=request.session.get('genus_name'))
         except BotSystGenus.DoesNotExist:
             return redirect('/botanical/add/')
+            pass
         species_lac = request.POST.get('species_lac')
         species_pl = request.POST.get('species_pl')
 
         if not species_lac or not species_pl:
-            error.append('Obnie nazwy są wymagane.')
+            error.append('Obie nazwy są wymagane.')
         else:
             if BotSystSpecies.objects.filter(genus=genus, lac_name=species_lac, pl_name=species_pl).count():
                 error.append('Gatunek o takich nazwach już istnieje!')
